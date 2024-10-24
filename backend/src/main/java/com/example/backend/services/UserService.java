@@ -80,4 +80,8 @@ public class UserService {
 
         return ResponseEntity.ok(savedUser);
     }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 }
