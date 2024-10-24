@@ -15,6 +15,6 @@ public class Admin {
 
     @OneToOne
     @JoinColumn(name = "userId", nullable = false)
-    private User user;  // Link to User entity for authentication
+    private User user;
 }
 
