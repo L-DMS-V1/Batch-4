@@ -23,4 +23,17 @@ public class JwtUtil {
                 .signWith(SignatureAlgorithm.HS512, jwtSecretKey)
                 .compact();
     }
+
+    public String extractUsername(String token){
+        return Jwts.parser().setSigningKey(jwtSecretKey).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    private boolean isTokenExpired(String token) {
+        return Jwts.parser().setSigningKey(jwtSecretKey).parseClaimsJws(token).getBody().getExpiration().before(new Date());
+    }
+
+    public boolean validateToken(String token, org.springframework.security.core.userdetails.User user) {
+        final String username = extractUsername(token);
+        return (username.equals(user.getUsername()) && !isTokenExpired(token));
+    }
 }
