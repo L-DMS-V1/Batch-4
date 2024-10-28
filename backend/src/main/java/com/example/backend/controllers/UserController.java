@@ -9,8 +9,10 @@ import com.example.backend.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +29,8 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtUtil jwtUtil;
+
+    // For User Registration
     @PostMapping("/register")
     public ResponseEntity<?> registerNewUser(@RequestBody UserRegistrationDTO userRegistrationDto, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
@@ -45,7 +49,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during registration: " + e.getMessage());
         }
     }
-
+    // For User LOgin
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody UserLoginDto loginDto){
         User user = userService.findByUsername(loginDto.getUsername());
@@ -54,5 +58,24 @@ public class UserController {
         }
         String token = jwtUtil.generateToken(user);
         return ResponseEntity.status(HttpStatus.OK).body(new JwtResponse(token));
+    }
+    // For Role Based Authentication
+
+    @GetMapping("/employee/resource")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<String> employeeResource() {
+        return ResponseEntity.ok("Accessible to Employees");
+    }
+
+    @GetMapping("/manager/resource")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<String> managerResource() {
+        return ResponseEntity.ok("Accessible to Managers");
+    }
+
+    @GetMapping("/admin/resource")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> adminResource() {
+        return ResponseEntity.ok("Accessible to Admins");
     }
 }
