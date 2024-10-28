@@ -22,5 +22,5 @@ public class CourseProgress {
     @JoinColumn(name = "assignmentId", nullable = false)
     private CourseAssignment courseAssignment;
 
-    private int percentage;  // Progress percentage
+    private int percentage;
 }
