@@ -62,19 +62,19 @@ public class UserController {
     // For Role Based Authentication
 
     @GetMapping("/employee/resource")
-    @PreAuthorize("hasRole('EMPLOYEE')")
+    @PreAuthorize("hasRole('Employee')")
     public ResponseEntity<String> employeeResource() {
         return ResponseEntity.ok("Accessible to Employees");
     }
 
     @GetMapping("/manager/resource")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('Manager')")
     public ResponseEntity<String> managerResource() {
         return ResponseEntity.ok("Accessible to Managers");
     }
 
     @GetMapping("/admin/resource")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<String> adminResource() {
         return ResponseEntity.ok("Accessible to Admins");
     }

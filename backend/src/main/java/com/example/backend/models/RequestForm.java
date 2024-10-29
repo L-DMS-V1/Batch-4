@@ -3,6 +3,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @Entity
@@ -21,11 +23,9 @@ public class RequestForm {
     @Column(nullable = false)
     private String duration;
 
-    @Column(nullable = false)
-    private int requiredEmployees;
+    @Column(name = "requiredEmployees")
+    private Integer requiredEmployees;
 
-    @ManyToOne
-    @JoinColumn(name = "managerId", nullable = false)
-    private Manager manager;
+    private Integer managerId;
 }
 

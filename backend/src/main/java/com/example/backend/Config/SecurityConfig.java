@@ -1,6 +1,7 @@
 package com.example.backend.Config;
 
 import com.example.backend.services.CustomUserDetailsService;
+import com.example.backend.Config.JwtRequestFilter;
 import com.example.backend.services.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-
 @EnableMethodSecurity(prePostEnabled = true) // Enables @PreAuthorize annotations if needed
 public class SecurityConfig{
 
@@ -38,6 +38,9 @@ public class SecurityConfig{
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/employee/**").hasRole("Employee")   // Only accessible to employees
+                        .requestMatchers("/api/manager/**").hasRole("Manager")     // Only accessible to managers
+                        .requestMatchers("/api/admin/**").hasRole("Admin")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
