@@ -2,9 +2,13 @@ package com.example.backend.controllers;
 
 import com.example.backend.DTOs.RequestFormDto;
 import com.example.backend.DTOs.RequestFormResponse;
+import com.example.backend.DTOs.UserDto;
 import com.example.backend.models.Course;
+import com.example.backend.models.Employee;
 import com.example.backend.models.RequestForm;
+import com.example.backend.models.User;
 import com.example.backend.services.CourseService;
+import com.example.backend.services.EmployeeService;
 import com.example.backend.services.RequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +28,8 @@ public class ManagerController {
     private RequestService requestService;
     @Autowired
     private CourseService courseService;
+    @Autowired
+    private EmployeeService employeeService;
     @PostMapping("/request/create")
     @PreAuthorize("hasRole('Manager')")
     public ResponseEntity<?> createRequest(@RequestBody RequestFormDto requestFormDto, BindingResult bindingResult){
@@ -40,7 +46,7 @@ public class ManagerController {
         try{
             RequestForm requestForm = requestService.submitRequest(requestFormDto);
             RequestFormResponse res = new RequestFormResponse("Request created Successfully", requestForm);
-            return ResponseEntity.status(HttpStatus.OK).body(res);
+            return ResponseEntity.status(HttpStatus.CREATED).body(res);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: " + e.getMessage());
         }
@@ -51,10 +57,18 @@ public class ManagerController {
     public ResponseEntity<?> getAllCourses(){
         try{
             List<Course> courses = courseService.getAllCourses();
-            if(courses.size() == 0){
-                return ResponseEntity.status(HttpStatus.OK).body("No active courses.");
-            }
             return  ResponseEntity.status(HttpStatus.OK).body(courses);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: "+ e.getMessage());
+        }
+    }
+
+    @GetMapping("employees/all")
+    @PreAuthorize("hasRole('Manager')")
+    public ResponseEntity<?> getAllEmployees(){
+        try{
+            List<UserDto> employees = employeeService.getAllEmployeeUsers();
+            return  ResponseEntity.status(HttpStatus.OK).body(employees);
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: "+ e.getMessage());
         }
