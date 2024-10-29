@@ -29,9 +29,6 @@ public class AdminController {
     public ResponseEntity<?> findAllRequestsMade(){
         try{
             List<RequestForm> requestForms = requestService.getAllRequests();
-            if(requestForms.size() == 0){
-                return ResponseEntity.status(HttpStatus.OK).body("No pending requests.");
-            }
             return ResponseEntity.status(HttpStatus.OK).body(requestForms);
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: " + e.getMessage());
