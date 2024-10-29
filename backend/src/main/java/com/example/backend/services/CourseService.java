@@ -1,6 +1,5 @@
 package com.example.backend.services;
 
-import com.example.backend.DTOs.CourseAssignmentDto;
 import com.example.backend.DTOs.CourseDto;
 import com.example.backend.models.Course;
 import com.example.backend.models.CourseAssignment;
@@ -11,9 +10,8 @@ import com.example.backend.repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.PriorityQueue;
+import java.util.Optional;
 
 @Service
 public class CourseService {
@@ -56,5 +54,9 @@ public class CourseService {
         assignment.setDeadline(deadline);
 
         return courseAssignmentRepository.save(assignment);
+    }
+
+    public List<CourseAssignment> findCourseAssignmentsByEmployee(Optional<Employee> employee) {
+        return courseAssignmentRepository.findByEmployee(employee);
     }
 }
