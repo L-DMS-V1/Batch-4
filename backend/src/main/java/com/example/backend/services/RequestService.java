@@ -1,13 +1,13 @@
 package com.example.backend.services;
 
+import com.example.backend.DTOs.CourseAssignmentDto;
 import com.example.backend.DTOs.RequestFormDto;
-import com.example.backend.models.Manager;
-import com.example.backend.models.RequestForm;
-import com.example.backend.repositories.ManagerRepository;
-import com.example.backend.repositories.RequestRepository;
+import com.example.backend.models.*;
+import com.example.backend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,6 +16,12 @@ public class RequestService {
     private RequestRepository requestRepository;
     @Autowired
     private ManagerRepository managerRepository;
+    @Autowired
+    private CourseRepository courseRepository;
+    @Autowired
+    private EmployeeRepository employeeRepository;
+    @Autowired
+    private CourseAssignmentRepository courseAssignmentRepository;
     public RequestForm submitRequest(RequestFormDto requestFormDto){
         Manager manager = managerRepository.findByManagerId(requestFormDto.getManagerId());
         if(manager == null){
@@ -33,4 +39,6 @@ public class RequestService {
     public List<RequestForm> getAllRequests() {
         return requestRepository.findAll();
     }
+
+
 }
