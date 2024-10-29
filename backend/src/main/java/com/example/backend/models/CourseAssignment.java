@@ -1,5 +1,6 @@
 package com.example.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
@@ -23,10 +24,12 @@ public class CourseAssignment {
 
     @ManyToOne
     @JoinColumn(name = "employeeId", nullable = false)
+    @JsonBackReference
     private Employee employee;
 
     @ManyToOne
     @JoinColumn(name = "courseId", nullable = false)
+    @JsonBackReference
     private Course course;
 
     @OneToMany(mappedBy = "courseAssignment", cascade = CascadeType.ALL)
