@@ -17,6 +17,4 @@ public class Manager {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "manager", cascade = CascadeType.ALL)
-    private List<RequestForm> requestForms;
 }

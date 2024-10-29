@@ -1,6 +1,7 @@
 package com.example.backend.Config;
 
 import com.example.backend.services.CustomUserDetailsService;
+import com.example.backend.Config.JwtRequestFilter;
 import com.example.backend.services.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +35,16 @@ public class SecurityConfig{
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF protection
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // Allow access to authentication endpoints
-                        .anyRequest().authenticated() // All other endpoints require authentication
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/employee/**").hasRole("Employee")   // Only accessible to employees
+                        .requestMatchers("/api/manager/**").hasRole("Manager")     // Only accessible to managers
+                        .requestMatchers("/api/admin/**").hasRole("Admin")
+                        .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // No session state
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
