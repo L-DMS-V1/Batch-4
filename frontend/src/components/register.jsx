@@ -1,3 +1,5 @@
+// src/components/Register.jsx
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -16,13 +18,16 @@ const Register = () => {
     e.preventDefault();
     setError("");
     try {
-      const response = await axios.post('http://localhost:9004/api/auth/register', {
-        userEmail: email,
-        name,
-        password,
-        username,
-        role
-      });
+      const response = await axios.post(
+        "http://localhost:9004/api/auth/register",
+        {
+          userEmail: email,
+          name,
+          password,
+          username,
+          role,
+        }
+      );
       console.log("Registration Successful", response.data);
       navigate("/login"); // Directed to the Login Page after Successful registration
     } catch (error) {
@@ -78,8 +83,11 @@ const Register = () => {
                 placeholder="Password"
                 required
               />
-              <select className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-               value={role} onChange={(e) => setRole(e.target.value)}>
+              <select
+                className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+              >
                 <option value="ADMIN">Admin</option>
                 <option value="EMPLOYEE">Employee</option>
                 <option value="MANAGER">Manager</option>
