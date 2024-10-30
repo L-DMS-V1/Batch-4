@@ -3,8 +3,10 @@ package com.example.backend.services;
 import com.example.backend.DTOs.CourseDto;
 import com.example.backend.models.Course;
 import com.example.backend.models.CourseAssignment;
+import com.example.backend.models.CourseProgress;
 import com.example.backend.models.Employee;
 import com.example.backend.repositories.CourseAssignmentRepository;
+import com.example.backend.repositories.CourseProgressRepository;
 import com.example.backend.repositories.CourseRepository;
 import com.example.backend.repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,8 @@ public class CourseService {
     private EmployeeRepository employeeRepository;
     @Autowired
     private CourseAssignmentRepository courseAssignmentRepository;
+    @Autowired
+    private CourseProgressRepository courseProgressRepository;
     public Course createCourse(CourseDto courseDto) {
         Course course = new Course();
         course.setCourseName(courseDto.getCourseName());
@@ -58,5 +62,17 @@ public class CourseService {
 
     public List<CourseAssignment> findCourseAssignmentsByEmployee(Optional<Employee> employee) {
         return courseAssignmentRepository.findByEmployee(employee);
+    }
+    public CourseProgress initiateProgressRecord(CourseAssignment assignment){
+        CourseProgress progress = new CourseProgress();
+        progress.setCourseAssignment(assignment);
+        progress.setPercentage(0);
+        progress.setStatus("Pending");
+        progress.setLastAccessedDate();
+        return courseProgressRepository.save(progress);
+    }
+
+    public Optional<CourseAssignment> findAssignmentByAssignmentId(Integer assignmentId) {
+        return courseAssignmentRepository.findById(assignmentId);
     }
 }

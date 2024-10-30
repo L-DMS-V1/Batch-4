@@ -32,6 +32,6 @@ public class CourseAssignment {
     @JsonBackReference
     private Course course;
 
-    @OneToMany(mappedBy = "courseAssignment", cascade = CascadeType.ALL)
-    private List<CourseProgress> courseProgresses;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "courseAssignment")
+    private CourseProgress courseProgress;
 }

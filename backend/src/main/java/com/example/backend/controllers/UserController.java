@@ -49,7 +49,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during registration: " + e.getMessage());
         }
     }
-    // For User LOgin
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody UserLoginDto loginDto){
         User user = userService.findByUsername(loginDto.getUsername());
@@ -57,7 +56,12 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Credentials");
         }
         String token = jwtUtil.generateToken(user);
-        return ResponseEntity.status(HttpStatus.OK).body(new JwtResponse(token));
+        JwtResponse res = new JwtResponse();
+        res.setEmail(user.getEmail());
+        res.setUsername(user.getUsername());
+        res.setToken(token);
+        res.setRole(user.getRole().getRoleName());
+        return ResponseEntity.status(HttpStatus.OK).body(res);
     }
     // For Role Based Authentication
 

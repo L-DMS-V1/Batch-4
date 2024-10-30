@@ -5,6 +5,7 @@ import com.example.backend.DTOs.CourseCreationResponse;
 import com.example.backend.DTOs.CourseDto;
 import com.example.backend.models.Course;
 import com.example.backend.models.CourseAssignment;
+import com.example.backend.models.CourseProgress;
 import com.example.backend.models.RequestForm;
 import com.example.backend.services.CourseService;
 import com.example.backend.services.RequestService;
