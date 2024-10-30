@@ -40,7 +40,8 @@ public class ManagerController {
         if (isEmptyField(requestFormDto.getCourseName()) ||
                 isEmptyField(requestFormDto.getDescription()) ||
                 isEmptyField(requestFormDto.getDuration()) ||
-                isEmptyField(requestFormDto.getManagerId())) {
+                isEmptyField(requestFormDto.getManagerId())||
+                isEmptyField(requestFormDto.getRequiredEmployees())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Error: All required fields must be filled.");
         }
@@ -75,39 +76,5 @@ public class ManagerController {
         }
     }
 
-    @PostMapping("/course/assign")
-    @PreAuthorize("hasRole('Manager')")
-    public ResponseEntity<?> assignCourse(@RequestBody CourseAssignmentDto courseAssignmentDto, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Fields: " + bindingResult.getFieldErrors());
-        }
-        if(isEmptyField(courseAssignmentDto.getCourseId())||
-            isEmptyField(courseAssignmentDto.getDeadline())||
-            isEmptyField(courseAssignmentDto.getStatus())||
-            isEmptyField(courseAssignmentDto.getEmployeeIds().size())){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("All required fields must be filled.");
-        }
-        try{
-            List<CourseAssignment> successfulAssignments = new ArrayList<>();
-            List<String> failedAssignments = new ArrayList<>();
 
-            for (Integer employeeId : courseAssignmentDto.getEmployeeIds()) {
-                try {
-                    CourseAssignment courseAssignment = courseService.assignCourseToEmployee(courseAssignmentDto.getCourseId(), employeeId, courseAssignmentDto.getDeadline(), courseAssignmentDto.getStatus());
-                    successfulAssignments.add(courseAssignment);
-                } catch (Exception e) {
-                    failedAssignments.add("Failed to assign course to employee ID " + employeeId + ": " + e.getMessage());
-                }
-            }
-            Map<String, Object> response = new HashMap<>();
-            response.put("successfulAssignments", successfulAssignments);
-            response.put("failedAssignments", failedAssignments);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: "+ e.getMessage());
-        }
-
-
-    }
 }

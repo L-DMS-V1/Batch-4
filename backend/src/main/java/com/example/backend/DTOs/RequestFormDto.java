@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.List;
+
 
 @Data
 public class RequestFormDto {
@@ -15,7 +17,7 @@ public class RequestFormDto {
     private String description;
     @NotNull(message = "Duration is required")
     private String duration;
-    private Integer requiredEmployees;
+    private List<Integer> requiredEmployees;
     @NotNull(message = "Requested by manager ID is required")
     private Integer managerId;
 }

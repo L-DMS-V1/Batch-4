@@ -1,4 +1,5 @@
 package com.example.backend.models;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
@@ -24,7 +25,7 @@ public class RequestForm {
     private String duration;
 
     @Column(name = "requiredEmployees")
-    private Integer requiredEmployees;
+    private List<Integer> requiredEmployees;
 
     private Integer managerId;
 }

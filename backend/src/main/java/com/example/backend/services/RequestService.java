@@ -37,7 +37,9 @@ public class RequestService {
     }
 
     public List<RequestForm> getAllRequests() {
-        return requestRepository.findAll();
+        List<RequestForm> requestForms = requestRepository.findAll();
+        System.out.println(requestForms.toString() + requestForms.get(0).getRequiredEmployees().getClass());
+        return requestForms;
     }
 
 
