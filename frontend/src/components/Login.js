@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,22 +8,23 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const handleSignupClick = () => {
-        navigate('/signup');
-    };
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-        if (!username) {
-            setError('Username is required');
-        } else if (!passwordPattern.test(password)) {
-            setError('Password must contain at least 8 characters, including letters, numbers, and symbols.');
-        } else {
-            setError('');
-            console.log('Logging in with:', { username, password });
-            navigate('/training-requests');
+        try {
+            const response = await fetch('http://localhost:3001/users');
+            const users = await response.json();
+
+            const user = users.find((user) => user.username === username && user.password === password);
+
+            if (user) {
+                setError('');
+                navigate('/training-requests');
+            } else {
+                setError('Invalid username or password.');
+            }
+        } catch (error) {
+            setError('Error logging in. Please try again.');
         }
     };
 
@@ -59,9 +61,6 @@ const Login = () => {
                     Login
                 </button>
             </form>
-            <button onClick={handleSignupClick} className="mt-4 text-[#3A6D8C] underline">
-                Sign Up
-            </button>
         </div>
     );
 };
