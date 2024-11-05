@@ -2,11 +2,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { ENDPOINTS } from "../service/api";
 import { jwtDecode } from "jwt-decode";
-import { login } from "./api/auth";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -15,8 +15,8 @@ const Login = () => {
     e.preventDefault();
     setError("");
     try {
-      const response = await axios.post('http://localhost:9004/api/auth/login', {
-        userEmail: email ,
+      const response = await axios.post(ENDPOINTS.LOGIN, {
+        userName: username,
         password
       });
       const { token } = response.data; 
@@ -50,10 +50,10 @@ const Login = () => {
             <div className="mx-auto max-w-xs sm:max-w-md md:max-w-lg flex flex-col gap-4">
               <input
                 className="w-full px-5 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter your Username"
                 required
               />
               <input

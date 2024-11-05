@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { register } from "./api/auth";
+import { ENDPOINTS } from "../service/api";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -18,13 +18,12 @@ const Register = () => {
     e.preventDefault();
     setError("");
     try {
-      const response = await axios.post(
-        "http://localhost:9004/api/auth/register",
+      const response = await axios.post(ENDPOINTS.REGISTER,
         {
-          userEmail: email,
+          userName: username,
           name,
+          email,
           password,
-          username,
           role,
         }
       );
