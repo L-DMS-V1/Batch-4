@@ -1,32 +1,39 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const Login = ({ handleLogin }) => {
     const navigate = useNavigate(); // Hook for navigation
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState(location.state?.message || '');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:3001/users');
-            const users = await response.json();
+            const response = await fetch('http://localhost:9004/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
 
-            const user = users.find(
-                (user) => user.username === username && user.password === password
-            );
+            if (response.ok) {
+                const data = await response.json();
+                const { token, role, username, email } = data;
 
-            if (user) {
-                setError('');
-                handleLogin(user.username, user.password, user.role); // Set user state
-                // After login, navigate to the correct page based on role
-                if (user.role === 'manager') {
+                Cookies.set('authToken', token, { expires: 1 });
+                
+                handleLogin(username, role);
+                console.log("hi" + role)
+                if (role == 'Manager') {
                     navigate('/training-requests');  // Redirect to manager's page
-                } else if (user.role === 'employee') {
+                } else if (role == 'Employee') {
                     navigate('/employee-dashboard');  // Redirect to employee's page
-                } else if (user.role === 'admin') {
+                } else if (role == 'Admin') {
                     navigate('/admin-dashboard');  // Redirect to admin's page
                 }
             } else {
@@ -91,6 +98,9 @@ const Login = ({ handleLogin }) => {
                         >
                             Login
                         </button>
+                        <p className="text-center text-sm mt-4">
+                    Don't have an account? <Link to="/signup" className="text-[#001F3F] font-semibold">Signup</Link>
+                    </p>
                     </form>
                 </div>
             </div>
