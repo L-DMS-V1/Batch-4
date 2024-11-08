@@ -7,13 +7,21 @@ import TrainingRequestPage from './components/TrainingRequestPage';
 import AdminPage from './components/AdminPage';
 import EmployeePage from './components/EmployeePage';
 import CreateRequestPage from './components/CreateRequestPage';
+import Requests from './components/Requests';
+import CourseCreatePage from './components/CourseCreatePage';
 
 function App() {
-    const [user, setUser] = useState(null);  
+    const [user, setUser] = useState(null);
 
-    // Handle login and set user state
-    const handleLogin = (username,password,role) => {
-        setUser({ username, role }); 
+    const handleLogin = (username, role) => {
+        setUser({ username, role });
+    };
+
+    const roleRedirect = (role) => {
+        if (role === 'Manager') return '/training-requests';
+        if (role === 'Employee') return '/employee-dashboard';
+        if (role === 'Admin') return '/admin-dashboard';
+        return '/';
     };
 
     return (
@@ -23,20 +31,28 @@ function App() {
                 <Route path="/login" element={<Login handleLogin={handleLogin} />} />
                 <Route path="/signup" element={<Signup />} />
 
-               
                 <Route
                     path="/training-requests"
-                    element={user?.role === 'manager' ? <TrainingRequestPage /> : <Navigate to="/" />}
+                    element={user?.role === 'Manager' ? <TrainingRequestPage /> : <Navigate to="/" />}
                 />
                 <Route
                     path="/employee-dashboard"
-                    element={user?.role === 'employee' ? <EmployeePage /> : <Navigate to="/" />}
+                    element={user?.role === 'Employee' ? <EmployeePage /> : <Navigate to="/" />}
                 />
                 <Route
                     path="/admin-dashboard"
-                    element={user?.role === 'admin' ? <AdminPage /> : <Navigate to="/" />}
+                    element={user?.role === 'Admin' ? <AdminPage /> : <Navigate to="/" />}
+                />
+                <Route
+                    path="/admin/requests"
+                    element={user?.role === 'Admin' ? <Requests /> : <Navigate to="/" />}
+                />
+                <Route
+                    path="/admin/create-course"
+                    element={user?.role === 'Admin' ? <CourseCreatePage /> : <Navigate to="/" />}
                 />
                 <Route path="/create-request" element={<CreateRequestPage />} />
+                <Route path="*" element={<Navigate to={roleRedirect(user?.role)} />} />
             </Routes>
         </Router>
     );

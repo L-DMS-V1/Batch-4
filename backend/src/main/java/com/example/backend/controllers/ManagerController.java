@@ -24,6 +24,7 @@ import static com.example.backend.utils.ValidationUtils.isEmptyField;
 
 @RestController
 @RequestMapping("/api/manager")
+@CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS}, allowCredentials = "true")
 public class ManagerController {
     @Autowired
     private RequestService requestService;
@@ -48,6 +49,7 @@ public class ManagerController {
         try{
             RequestForm requestForm = requestService.submitRequest(requestFormDto);
             RequestFormResponse res = new RequestFormResponse("Request created Successfully", requestForm);
+            System.out.println(requestFormDto.getRequiredEmployees().toString());
             return ResponseEntity.status(HttpStatus.CREATED).body(res);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: " + e.getMessage());
