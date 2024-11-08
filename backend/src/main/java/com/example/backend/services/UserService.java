@@ -104,11 +104,8 @@ public class UserService {
     public String getJwtSecret() {
         return jwtConfig.getSecret();
     }
-    //@Value("${jwt.secret}")
     private String jwtSecret; 
-    // UserService.java (assuming it contains JWT utilities)
     public String getRoleFromToken(String token) {
-         //byte[] jwtSecret;
         Claims claims = Jwts.parser()
         .setSigningKey(jwtSecret)  // jwtSecret is your signing key
         .parseClaimsJws(token)

@@ -1,9 +1,11 @@
 package com.example.backend.models;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Course {
@@ -29,4 +31,8 @@ public class Course {
 
     @Column(nullable = false)
     private String outcomes;
+
+    public Course(int courseId) {
+        this.courseId = courseId;
+    }
 }
