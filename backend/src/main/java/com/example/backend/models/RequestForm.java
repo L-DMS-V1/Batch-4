@@ -1,7 +1,10 @@
 package com.example.backend.models;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -21,11 +24,9 @@ public class RequestForm {
     @Column(nullable = false)
     private String duration;
 
-    @Column(nullable = false)
-    private int requiredEmployees;
+    @Column(name = "requiredEmployees")
+    private List<Integer> requiredEmployees;
 
-    @ManyToOne
-    @JoinColumn(name = "managerId", nullable = false)
-    private Manager manager;
+    private Integer managerId;
 }
 

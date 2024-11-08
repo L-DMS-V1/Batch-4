@@ -49,7 +49,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during registration: " + e.getMessage());
         }
     }
-    // For User LOgin
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody UserLoginDto loginDto){
         User user = userService.findByUsername(loginDto.getUsername());
@@ -57,24 +56,29 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Credentials");
         }
         String token = jwtUtil.generateToken(user);
-        return ResponseEntity.status(HttpStatus.OK).body(new JwtResponse(token));
+        JwtResponse res = new JwtResponse();
+        res.setEmail(user.getEmail());
+        res.setUsername(user.getUsername());
+        res.setToken(token);
+        res.setRole(user.getRole().getRoleName());
+        return ResponseEntity.status(HttpStatus.OK).body(res);
     }
     // For Role Based Authentication
 
     @GetMapping("/employee/resource")
-    @PreAuthorize("hasRole('EMPLOYEE')")
+    @PreAuthorize("hasRole('Employee')")
     public ResponseEntity<String> employeeResource() {
         return ResponseEntity.ok("Accessible to Employees");
     }
 
     @GetMapping("/manager/resource")
-    @PreAuthorize("hasRole('MANAGER')")
+    @PreAuthorize("hasRole('Manager')")
     public ResponseEntity<String> managerResource() {
         return ResponseEntity.ok("Accessible to Managers");
     }
 
     @GetMapping("/admin/resource")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<String> adminResource() {
         return ResponseEntity.ok("Accessible to Admins");
     }

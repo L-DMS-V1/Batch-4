@@ -1,5 +1,6 @@
 package com.example.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
@@ -21,5 +22,6 @@ public class Feedback {
 
     @ManyToOne
     @JoinColumn(name = "employeeId", nullable = false)
+    @JsonBackReference
     private Employee employee;
 }

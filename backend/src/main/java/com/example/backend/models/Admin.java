@@ -1,5 +1,6 @@
 package com.example.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
@@ -15,6 +16,7 @@ public class Admin {
 
     @OneToOne
     @JoinColumn(name = "userId", nullable = false)
+    @JsonBackReference
     private User user;
 }
 

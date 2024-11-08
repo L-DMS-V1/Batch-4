@@ -1,4 +1,5 @@
 package com.example.backend.models;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
@@ -19,6 +20,7 @@ public class Employee {
 
     @OneToOne
     @JoinColumn(name = "userId", nullable = false)
+    @JsonBackReference
     private User user;
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)

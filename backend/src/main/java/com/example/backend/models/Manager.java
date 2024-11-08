@@ -1,4 +1,5 @@
 package com.example.backend.models;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
@@ -15,8 +16,7 @@ public class Manager {
 
     @OneToOne
     @JoinColumn(name = "userId", nullable = false)
+    @JsonBackReference
     private User user;
 
-    @OneToMany(mappedBy = "manager", cascade = CascadeType.ALL)
-    private List<RequestForm> requestForms;
 }
