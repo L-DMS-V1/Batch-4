@@ -9,7 +9,7 @@ export default function TrainingRequestPage() {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const response = await fetch('http://localhost:9004/api/manager/request/all');
+        const response = await fetch('http://localhost:9004/api/manager/course/all');
         const data = await response.json();
         console.log('Fetched Requests:', data); // Log the fetched data
         setRequests(data);

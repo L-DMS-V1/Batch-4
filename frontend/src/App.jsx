@@ -51,6 +51,10 @@ function App() {
                     path="/admin/create-course"
                     element={user?.role === 'Admin' ? <CourseCreatePage /> : <Navigate to="/" />}
                 />
+                <Route
+                    path="/admin/courses-active"
+                    element={user?.role === 'Admin' ? <ActiveCourses /> : <Navigate to="/" />}
+                />
                 <Route path="/create-request" element={<CreateRequestPage />} />
                 <Route path="*" element={<Navigate to={roleRedirect(user?.role)} />} />
             </Routes>

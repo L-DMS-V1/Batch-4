@@ -71,6 +71,7 @@ export default function CreateRequestPage() {
       setErrors({ message: 'Error submitting request. Please try again.' });
     }
   };
+  console.log(employees)
 
   return (
     <div className="bg-[#E9EFEC] min-h-screen p-4">
