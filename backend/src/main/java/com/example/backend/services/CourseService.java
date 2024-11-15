@@ -48,17 +48,20 @@ public class CourseService {
             throw new IllegalArgumentException("Course not found.");
         }
 
-        Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
+        Employee employee = employeeRepository.findByUserId(employeeId);
+        if(employee == null){
+            throw new IllegalArgumentException("Employee not found.");
+        }
 
-        CourseAssignment assignment = new CourseAssignment();
-        assignment.setCourse(course);
-        assignment.setEmployee(employee);
-        assignment.setStatus(status);
-        assignment.setDeadline(deadline);
+            CourseAssignment assignment = new CourseAssignment();
+            assignment.setCourse(course);
+            assignment.setEmployee(employee);
+            assignment.setStatus(status);
+            assignment.setDeadline(deadline);
 
-        return courseAssignmentRepository.save(assignment);
-    }
+            return courseAssignmentRepository.save(assignment);
+        }
+
 
     public List<CourseAssignment> findCourseAssignmentsByEmployee(Optional<Employee> employee) {
         return courseAssignmentRepository.findByEmployee(employee);
