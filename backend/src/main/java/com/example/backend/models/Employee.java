@@ -14,6 +14,10 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int employeeId;
 
+    public Employee(int employeeId) {
+        this.employeeId = employeeId;
+    }
+
     @OneToOne
     @JoinColumn(name = "userId", nullable = false)
     @JsonBackReference
