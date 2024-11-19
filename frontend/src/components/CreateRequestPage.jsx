@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
 export default function CreateRequestPage() {
+  const {managerId} = useParams();
   const navigate = useNavigate();
   const [courseName, setCourseName] = useState('');
   const [description, setDescription] = useState('');
   const [duration, setDuration] = useState('');
   const [requiredEmployees, setRequiredEmployees] = useState([]);
-  const [managerId, setManagerId] = useState('');
+  // const [managerId, setManagerId] = useState('');
   const [errors, setErrors] = useState({});
   const [employees, setEmployees] = useState([]);
 
@@ -64,7 +65,7 @@ export default function CreateRequestPage() {
         const errorData = await response.json();
         setErrors({ message: errorData });
       } else {
-        navigate('/training-requests');
+        navigate(`/training-requests/${managerId}`);
       }
     } catch (error) {
       console.error('Error submitting request:', error);
@@ -124,7 +125,7 @@ export default function CreateRequestPage() {
             classNamePrefix="select"
           />
         </div>
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label className="block text-gray-700 mb-2">Manager ID</label>
           <input
             type="number"
@@ -133,7 +134,7 @@ export default function CreateRequestPage() {
             className="border border-gray-300 p-2 w-full rounded"
             required
           />
-        </div>
+        </div> */}
         <button
           type="submit"
           className="bg-[#3A6D8C] text-white px-6 py-2 rounded-lg shadow-md hover:bg-[#001F3F] transition-all duration-300 ease-in-out"

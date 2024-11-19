@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+import lombok.ToString;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -18,5 +21,9 @@ public class Admin {
     @JoinColumn(name = "userId", nullable = false)
     @JsonBackReference
     private User user;
+
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @ToString.Exclude
+    private List<Course> coursesCreated;
 }
 

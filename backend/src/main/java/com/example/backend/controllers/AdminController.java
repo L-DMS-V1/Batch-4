@@ -3,10 +3,8 @@ package com.example.backend.controllers;
 import com.example.backend.DTOs.CourseAssignmentDto;
 import com.example.backend.DTOs.CourseCreationResponse;
 import com.example.backend.DTOs.CourseDto;
-import com.example.backend.models.Course;
-import com.example.backend.models.CourseAssignment;
-import com.example.backend.models.CourseProgress;
-import com.example.backend.models.RequestForm;
+import com.example.backend.models.*;
+import com.example.backend.services.AdminService;
 import com.example.backend.services.CourseService;
 import com.example.backend.services.RequestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +28,8 @@ public class AdminController {
     private RequestService requestService;
     @Autowired
     private CourseService courseService;
+    @Autowired
+    private AdminService adminService;
     @GetMapping("/request/all")
     @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<?> findAllRequestsMade(){
@@ -41,9 +41,9 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/course/create")
+    @PostMapping("/{adminId}/course/create/{requestId}")
     @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<?> createCourse(@RequestBody CourseDto courseDto, BindingResult bindingResult){
+    public ResponseEntity<?> createCourse(@PathVariable Integer adminId, @PathVariable Integer requestId, @RequestBody CourseDto courseDto, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Fields: " + bindingResult.getFieldErrors());
         }
@@ -56,9 +56,14 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Error: All required fields must be filled.");
         }
+        Admin admin = adminService.getByAdminId(adminId);
+        if(admin == null){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error: No such admin present.");
+        }
         try{
-            Course course = courseService.createCourse(courseDto);
+            Course course = courseService.createCourse(courseDto, admin);
             CourseCreationResponse res = new CourseCreationResponse(course, "Course created successfully.");
+            requestService.updateRequestStatus(requestId);
             return ResponseEntity.status(HttpStatus.CREATED).body(res);
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: " + e.getMessage());

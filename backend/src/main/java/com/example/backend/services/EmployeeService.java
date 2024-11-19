@@ -32,4 +32,13 @@ public class EmployeeService {
     public Optional<Employee> findEmployee(Integer employeeId) {
         return employeeRepository.findById(employeeId);
     }
+
+    public Integer findEmployeeByUserId(int userId) {
+        Employee employee = employeeRepository.findByUserId(userId);
+
+        if (employee == null) {
+            throw new RuntimeException("No employee found for userId: " + userId);
+        }
+        return employee.getEmployeeId();
+    }
 }

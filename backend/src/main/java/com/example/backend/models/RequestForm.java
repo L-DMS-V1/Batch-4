@@ -27,6 +27,12 @@ public class RequestForm {
     @Column(name = "requiredEmployees")
     private List<Integer> requiredEmployees;
 
-    private Integer managerId;
+    @Column(nullable = false)
+    private String status;
+
+    @ManyToOne
+    @JoinColumn(name="managerId", referencedColumnName = "managerId")
+    @JsonBackReference
+    private Manager requestingManager;
 }
 

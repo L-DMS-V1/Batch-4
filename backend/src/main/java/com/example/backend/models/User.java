@@ -3,6 +3,7 @@ package com.example.backend.models;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+import lombok.ToString;
 
 @Data
 @NoArgsConstructor
@@ -18,7 +19,7 @@ public class User {
 
     @Column(nullable = false)
     private String password;
-    
+
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -26,10 +27,12 @@ public class User {
     @JoinColumn(name = "roleId")
     private Role role;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private Manager manager;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private Employee employee;
 }
 

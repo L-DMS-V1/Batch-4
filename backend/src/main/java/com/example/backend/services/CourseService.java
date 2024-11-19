@@ -1,17 +1,17 @@
 package com.example.backend.services;
 
 import com.example.backend.DTOs.CourseDto;
-import com.example.backend.models.Course;
-import com.example.backend.models.CourseAssignment;
-import com.example.backend.models.CourseProgress;
-import com.example.backend.models.Employee;
+import com.example.backend.models.*;
 import com.example.backend.repositories.CourseAssignmentRepository;
 import com.example.backend.repositories.CourseProgressRepository;
 import com.example.backend.repositories.CourseRepository;
 import com.example.backend.repositories.EmployeeRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +25,7 @@ public class CourseService {
     private CourseAssignmentRepository courseAssignmentRepository;
     @Autowired
     private CourseProgressRepository courseProgressRepository;
-    public Course createCourse(CourseDto courseDto) {
+    public Course createCourse(CourseDto courseDto, Admin admin) {
         Course course = new Course();
         course.setCourseName(courseDto.getCourseName());
         course.setDuration(courseDto.getDuration());
@@ -33,6 +33,9 @@ public class CourseService {
         course.setKeyConcepts(courseDto.getKeyConcepts());
         course.setResourceLinks(courseDto.getResourceLinks());
         course.setOtherLinks(courseDto.getOtherLinks());
+        course.setCreatedBy(admin);
+        LocalDate currentDate = LocalDate.now();
+        course.setCreatedAt(currentDate);
         return courseRepository.save(course);
     }
 
@@ -78,4 +81,22 @@ public class CourseService {
     public Optional<CourseAssignment> findAssignmentByAssignmentId(Integer assignmentId) {
         return courseAssignmentRepository.findById(assignmentId);
     }
+
+
+    public Course findCourseByAssignment(Integer assignmentId) {
+        return courseAssignmentRepository.findCourseByAssignmentId(assignmentId);
+    }
+
+    public CourseProgress findCourseProgressByAssignmentId(Integer assignmentId) {
+        return courseProgressRepository.findByCourseAssignment_AssignmentId(assignmentId);
+    }
+
+    @Transactional
+    public void updateAssignmentStatus(Integer assignmentId, String status) {
+        int rowsAffected = courseAssignmentRepository.updateCourseAssignmentStatus(assignmentId, status);
+        if (rowsAffected == 0) {
+            throw new RuntimeException("No rows affected. Assignment ID might be invalid.");
+        }
+    }
+
 }

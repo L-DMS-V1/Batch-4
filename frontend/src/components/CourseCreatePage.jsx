@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 
 export default function CourseCreatePage() {
+  const {adminId} = useParams();
   const getAuthToken = () => {
     const match = document.cookie.match(new RegExp('(^| )authToken=([^;]+)'));
     return match ? match[2] : null;
@@ -12,6 +13,7 @@ export default function CourseCreatePage() {
   const location = useLocation();
 
   // State to manage form fields
+  const [requestId, setRequestId] = useState(0);
   const [courseName, setCourseName] = useState('');
   const [keyConcepts, setKeyConcepts] = useState('');
   const [duration, setDuration] = useState('');
@@ -31,6 +33,7 @@ export default function CourseCreatePage() {
   useEffect(() => {
     // If request data is available, pre-fill the form
     if (request) {
+      setRequestId(request.requestId || 0)
       setCourseName(request.courseName || '');
       setKeyConcepts(request.keyConcepts || '');
       setDuration(request.duration || '');
@@ -74,7 +77,7 @@ export default function CourseCreatePage() {
     let token;
     try {
       token = getAuthToken();
-      const response = await fetch('http://localhost:9004/api/admin/course/create', {
+      const response = await fetch(`http://localhost:9004/api/admin/${adminId}/course/create/${requestId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -118,7 +121,7 @@ export default function CourseCreatePage() {
       } else {
         const data = await response.json();
         alert('course created and assigned')
-        navigate('/admin/admin-dashboard')
+        navigate(`/admin-dashboard/${adminId}`)
       }
     } catch (error) {
       console.error('Error assigning course:', error);

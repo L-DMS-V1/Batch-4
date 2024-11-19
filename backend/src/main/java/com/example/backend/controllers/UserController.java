@@ -4,6 +4,9 @@ import com.example.backend.DTOs.JwtResponse;
 import com.example.backend.DTOs.UserLoginDto;
 import com.example.backend.DTOs.UserRegistrationDTO;
 import com.example.backend.models.User;
+import com.example.backend.services.AdminService;
+import com.example.backend.services.EmployeeService;
+import com.example.backend.services.ManagerService;
 import com.example.backend.services.UserService;
 import com.example.backend.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,12 @@ public class UserController {
     private UserService userService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private EmployeeService employeeService;
+    @Autowired
+    private ManagerService managerService;
+    @Autowired
+    private AdminService adminService;
     @Autowired
     private JwtUtil jwtUtil;
 
@@ -61,6 +70,16 @@ public class UserController {
         res.setUsername(user.getUsername());
         res.setToken(token);
         res.setRole(user.getRole().getRoleName());
+        if(user.getRole().getRoleName().matches("Employee")) {
+            res.setId(employeeService.findEmployeeByUserId(user.getUserId()));
+        }else if(user.getRole().getRoleName().matches("Manager")){
+            res.setId(managerService.findManagerByUserId(user.getUserId()));
+        }else if(user.getRole().getRoleName().matches("Admin")){
+            res.setId(adminService.findAdminByUserId(user.getUserId()));
+        }else{
+            res.setId(-1);
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
     // For Role Based Authentication

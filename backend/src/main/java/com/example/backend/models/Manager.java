@@ -3,6 +3,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+import lombok.ToString;
+
 import java.util.List;
 
 @Data
@@ -18,5 +20,9 @@ public class Manager {
     @JoinColumn(name = "userId", nullable = false)
     @JsonBackReference
     private User user;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private List<RequestForm> requestsMade;
 
 }
