@@ -45,7 +45,7 @@ public class EmployeeController {
             @PathVariable Integer progressId) {
         try {
 
-            courseService.completeAssignment(progressId, assignmentId, progressPercentage, status);
+//            courseService.completeAssignment(progressId, assignmentId, progressPercentage, status);
             return ResponseEntity.ok("Course marked as completed successfully!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error completing course: " + e.getMessage());
