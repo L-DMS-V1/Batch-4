@@ -1,6 +1,6 @@
 package com.example.backend.services;
 
-import com.example.backend.Config.JwtConfig;
+//import com.example.backend.Config.JwtConfig;
 import com.example.backend.DTOs.UserRegistrationDTO;
 import com.example.backend.models.Admin;
 import com.example.backend.models.Employee;
@@ -40,7 +40,7 @@ public class UserService {
     @Autowired
     private EmployeeRepository employeeRepository;
     
-        private JwtConfig jwtConfig;
+//        private JwtConfig jwtConfig;
     
         public ResponseEntity<?> registerUser(UserRegistrationDTO userRegistrationDTO) {
             Role role = roleRepository.findByRoleName(userRegistrationDTO.getRole());
@@ -89,41 +89,41 @@ public class UserService {
         public User findByUsername(String username) {
             return userRepository.findByUsername(username);
         }
-    
-        @Autowired
-        public UserService(JwtConfig jwtConfig) {
-            this.jwtConfig = jwtConfig;
-    }
+//
+//        @Autowired
+//        public UserService(JwtConfig jwtConfig) {
+//            this.jwtConfig = jwtConfig;
+//    }
 
-    public String getJwtSecret() {
-        return jwtConfig.getSecret();
-    }
-    //@Value("${jwt.secret}")
-    private String jwtSecret; 
-    // UserService.java (assuming it contains JWT utilities)
-    public String getRoleFromToken(String token) {
-         //byte[] jwtSecret;
-        Claims claims = Jwts.parser()
-        .setSigningKey(jwtSecret)  // jwtSecret is your signing key
-        .parseClaimsJws(token)
-        .getBody();
-    return claims.get("role", String.class); // assuming role is stored in token
-}
-public String getUsernameFromToken(String token) {
-    Claims claims = Jwts.parser()
-        .setSigningKey(jwtSecret)
-        .parseClaimsJws(token)
-        .getBody();
-    return claims.getSubject(); // Assuming the username is stored in the "sub" (subject) field
-}
-public boolean validateToken(String token) {
-    try {
-        Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
-        return true;
-    } catch (Exception e) {
-        // Log token validation error here, if necessary
-        return false;
-    }
-}
+//    public String getJwtSecret() {
+//        return jwtConfig.getSecret();
+//    }
+//    //@Value("${jwt.secret}")
+//    private String jwtSecret;
+//    // UserService.java (assuming it contains JWT utilities)
+//    public String getRoleFromToken(String token) {
+//         //byte[] jwtSecret;
+//        Claims claims = Jwts.parser()
+//        .setSigningKey(jwtSecret)  // jwtSecret is your signing key
+//        .parseClaimsJws(token)
+//        .getBody();
+//    return claims.get("role", String.class); // assuming role is stored in token
+//}
+//public String getUsernameFromToken(String token) {
+//    Claims claims = Jwts.parser()
+//        .setSigningKey(jwtSecret)
+//        .parseClaimsJws(token)
+//        .getBody();
+//    return claims.getSubject(); // Assuming the username is stored in the "sub" (subject) field
+//}
+//public boolean validateToken(String token) {
+//    try {
+//        Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+//        return true;
+//    } catch (Exception e) {
+//        // Log token validation error here, if necessary
+//        return false;
+//    }
+//}
 
 }

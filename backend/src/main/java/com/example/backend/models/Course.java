@@ -1,8 +1,11 @@
 package com.example.backend.models;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -32,7 +35,15 @@ public class Course {
     @Column(nullable = false)
     private String outcomes;
 
-    public Course(int courseId) {
-        this.courseId = courseId;
-    }
+    @ManyToOne
+    @JoinColumn(name = "adminId", referencedColumnName = "adminId")
+    @JsonBackReference
+    private Admin createdBy;
+
+    @Column(nullable = false)
+    private LocalDate createdAt;
+
+//    public Course(int courseId) {
+//        this.courseId = courseId;
+//    }
 }

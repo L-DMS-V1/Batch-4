@@ -15,14 +15,14 @@ import java.time.LocalDateTime;
 public class EmployeeCourseProgress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer progressId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id", nullable = false)
+    @JoinColumn(name = "employeeId", nullable = false, referencedColumnName = "employeeId")
     private Employee employee;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id", nullable = false)
+    @JoinColumn(name = "courseId", nullable = false, referencedColumnName = "courseId")
     private Course course;
 
     private double completionPercentage;

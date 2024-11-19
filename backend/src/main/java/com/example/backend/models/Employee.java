@@ -3,6 +3,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+import lombok.ToString;
+
 import java.util.List;
 
 @Data
@@ -14,18 +16,19 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int employeeId;
 
-    public Employee(int employeeId) {
-        this.employeeId = employeeId;
-    }
+    @Column(nullable = true)
+    private String position;
 
     @OneToOne
-    @JoinColumn(name = "userId", nullable = false)
-    @JsonBackReference
+    @JoinColumn(name = "userId", nullable = false, referencedColumnName = "userId")
+    @ToString.Exclude
     private User user;
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<CourseAssignment> courseAssignments;
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<Feedback> feedbacks;
 }

@@ -12,4 +12,5 @@ public class JwtResponse {
     String email;
     String role;
     String token;
+    Integer id;
 }

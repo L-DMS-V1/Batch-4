@@ -23,18 +23,18 @@ const Login = ({ handleLogin }) => {
 
             if (response.ok) {
                 const data = await response.json();
-                const { token, role, username, email } = data;
+                const { token, role, username, email, id } = data;
 
                 Cookies.set('authToken', token, { expires: 1 });
                 
                 handleLogin(username, role);
                 console.log("hi" + role)
                 if (role == 'Manager') {
-                    navigate('/training-requests');  // Redirect to manager's page
+                    navigate(`/training-requests/${id}`);  // Redirect to manager's page
                 } else if (role == 'Employee') {
-                    navigate('/employee-dashboard');  // Redirect to employee's page
+                    navigate(`/employee-dashboard/${id}`);  // Redirect to employee's page
                 } else if (role == 'Admin') {
-                    navigate('/admin-dashboard');  // Redirect to admin's page
+                    navigate(`/admin-dashboard/${id}`);  // Redirect to admin's page
                 }
             } else {
                 setError('Invalid username or password.');

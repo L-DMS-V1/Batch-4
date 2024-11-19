@@ -78,5 +78,15 @@ public class ManagerController {
         }
     }
 
+    @GetMapping("/{managerId}/request/all")
+    public ResponseEntity<?> getRequests(@PathVariable Integer managerId){
+        try{
+            List<RequestForm> requests = requestService.getAllRequestsByManagerId(managerId);
+            return  ResponseEntity.status(HttpStatus.OK).body(requests);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: "+ e.getMessage());
+        }
+    }
+
 
 }

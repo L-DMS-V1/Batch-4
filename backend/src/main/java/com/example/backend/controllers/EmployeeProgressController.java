@@ -19,7 +19,7 @@ public class EmployeeProgressController {
     private EmployeeProgressService progressService;
 
     @GetMapping("/{employeeId}")
-    public ResponseEntity<List<EmployeeProgressDTO>> getEmployeeProgress(@PathVariable Long employeeId) {
+    public ResponseEntity<List<EmployeeProgressDTO>> getEmployeeProgress(@PathVariable Integer employeeId) {
         return ResponseEntity.ok(progressService.getEmployeeProgress(employeeId));
     }
 

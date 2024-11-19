@@ -18,8 +18,8 @@ public class EmployeeProgressService {
     @Autowired
     private EmployeeCourseProgressRepository progressRepository;
 
-    public List<EmployeeProgressDTO> getEmployeeProgress(int employeeId) {
-        List<EmployeeCourseProgress> progressList = progressRepository.findByEmployeeId(employeeId);
+    public List<EmployeeProgressDTO> getEmployeeProgress(Integer employeeId) {
+        List<EmployeeCourseProgress> progressList = progressRepository.findByEmployee_EmployeeId(employeeId);
         return progressList.stream()
                 .map(progress -> new EmployeeProgressDTO(
                         progress.getEmployee().getEmployeeId(),
@@ -29,22 +29,22 @@ public class EmployeeProgressService {
                 .collect(Collectors.toList());
     }
 
-    public List<EmployeeProgressDTO> getEmployeeProgress(Long employeeId) {
-        return getEmployeeProgress(employeeId.intValue());
-    }
+//    public List<EmployeeProgressDTO> getEmployeeProgress(Integer employeeId) {
+//        return progressRepository.getEmployeeProgress(employeeId);
+//    }
 
     public void updateEmployeeProgress(EmployeeProgressDTO progressDTO) {
-         Optional<EmployeeCourseProgress> progressOpt = progressRepository.findByEmployeeIdAndCourseCourseId(
+         Optional<EmployeeCourseProgress> progressOpt = progressRepository.findByEmployee_EmployeeIdAndCourse_CourseId(
             progressDTO.getEmployeeId(), progressDTO.getCourseId());
 
             EmployeeCourseProgress progress = progressOpt.orElse(new EmployeeCourseProgress());
         
-            if (progress.getEmployee() == null) {
-                progress.setEmployee(new Employee(progressDTO.getEmployeeId()));
-            }
-            if (progress.getCourse() == null) {
-                progress.setCourse(new Course(progressDTO.getCourseId()));
-            }
+//            if (progress.getEmployee() == null) {
+//                progress.setEmployee(new Employee(progressDTO.getEmployeeId()));
+//            }
+//            if (progress.getCourse() == null) {
+//                progress.setCourse(new Course(progressDTO.getCourseId()));
+//            }
 
         progress.setCompletionPercentage(progressDTO.getCompletionPercentage());
         progress.setStatus(progressDTO.getStatus());

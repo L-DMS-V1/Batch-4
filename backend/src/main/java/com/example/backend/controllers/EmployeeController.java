@@ -1,5 +1,7 @@
 package com.example.backend.controllers;
 
+import com.example.backend.DTOs.AssignmentResponseDto;
+import com.example.backend.models.Course;
 import com.example.backend.models.CourseAssignment;
 import com.example.backend.models.CourseProgress;
 import com.example.backend.models.Employee;
@@ -12,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -36,6 +39,39 @@ public class EmployeeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: " + e.getMessage());
         }
     }
+    @PostMapping("/assignments/{progressId}/complete")
+    @PreAuthorize("hasRole('Employee')")
+    public ResponseEntity<?> completeAssignment(
+            @PathVariable Integer progressId) {
+        try {
+
+//            courseService.completeAssignment(progressId, assignmentId, progressPercentage, status);
+            return ResponseEntity.ok("Course marked as completed successfully!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error completing course: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/assignment/{assignmentId}")
+    @PreAuthorize("hasRole('Employee')")
+    public ResponseEntity<?> getAssignmentDetails(@PathVariable Integer assignmentId){
+        Optional<CourseAssignment> assignment = courseService.findAssignmentByAssignmentId(assignmentId);
+        if(assignment.isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Assignment not found with ID: "+ assignmentId);
+        }
+        try {
+            Course course = courseService.findCourseByAssignment(assignmentId);
+            CourseProgress progress = courseService.findCourseProgressByAssignmentId(assignmentId);
+            AssignmentResponseDto res = new AssignmentResponseDto();
+            res.setAssignment(assignment.get());
+            res.setCourse(course);
+            res.setProgress(progress);
+            return ResponseEntity.status(HttpStatus.OK).body(res);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: " + e.getMessage());
+        }
+    }
+
     @PostMapping("/{employeeId}/assignments/{assignmentId}/start")
     @PreAuthorize("hasRole('Employee')")
     public ResponseEntity<?> startAssignment(@PathVariable Integer employeeId, @PathVariable Integer assignmentId){
@@ -50,6 +86,7 @@ public class EmployeeController {
 
         try{
             CourseProgress progress = courseService.initiateProgressRecord(assignment.get());
+            courseService.updateAssignmentStatus(assignmentId, "ONGOING");
             return ResponseEntity.status(HttpStatus.CREATED).body(progress);
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: " + e.getMessage());

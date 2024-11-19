@@ -4,6 +4,7 @@ import com.example.backend.DTOs.CourseAssignmentDto;
 import com.example.backend.DTOs.RequestFormDto;
 import com.example.backend.models.*;
 import com.example.backend.repositories.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,8 @@ public class RequestService {
     private EmployeeRepository employeeRepository;
     @Autowired
     private CourseAssignmentRepository courseAssignmentRepository;
+
+
     public RequestForm submitRequest(RequestFormDto requestFormDto){
         Manager manager = managerRepository.findByManagerId(requestFormDto.getManagerId());
         if(manager == null){
@@ -32,7 +35,8 @@ public class RequestService {
         requestForm.setDescription(requestFormDto.getDescription());
         requestForm.setDuration(requestFormDto.getDuration());
         requestForm.setRequiredEmployees(requestFormDto.getRequiredEmployees());
-        requestForm.setManagerId(requestFormDto.getManagerId());
+        requestForm.setRequestingManager(managerRepository.findByManagerId(requestFormDto.getManagerId()));
+        requestForm.setStatus("PENDING");
         return requestRepository.save(requestForm);
     }
 
@@ -43,4 +47,15 @@ public class RequestService {
     }
 
 
+    @Transactional
+    public void updateRequestStatus(Integer requestId) {
+        int rowsUpdated = requestRepository.updateRequestStatus(requestId);
+        if (rowsUpdated == 0) {
+            throw new IllegalStateException("No PENDING request found for ID: " + requestId);
+        }
+    }
+
+    public List<RequestForm> getAllRequestsByManagerId(Integer managerId) {
+        return requestRepository.findByRequestingManager_ManagerId(managerId);
+    }
 }

@@ -1,11 +1,12 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const AdminPage = () => {
   const navigate = useNavigate();
+  const {adminId} = useParams();
 
   const handleNavigate = () => {
-    navigate('/admin/requests');
+    navigate(`/admin/${adminId}/requests`);
   };
 
   return (

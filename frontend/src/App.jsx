@@ -9,6 +9,8 @@ import EmployeePage from './components/EmployeePage';
 import CreateRequestPage from './components/CreateRequestPage';
 import Requests from './components/Requests';
 import CourseCreatePage from './components/CourseCreatePage';
+import ActiveCourses from './components/ActiveCourses';
+import AssignmentPage from './components/AssignmentPage';
 
 function App() {
     const [user, setUser] = useState(null);
@@ -32,26 +34,31 @@ function App() {
                 <Route path="/signup" element={<Signup />} />
 
                 <Route
-                    path="/training-requests"
+                    path="/training-requests/:managerId"
                     element={user?.role === 'Manager' ? <TrainingRequestPage /> : <Navigate to="/" />}
                 />
                 <Route
-                    path="/employee-dashboard"
+                    path="/employee-dashboard/:employeeId"
                     element={user?.role === 'Employee' ? <EmployeePage /> : <Navigate to="/" />}
                 />
                 <Route
-                    path="/admin-dashboard"
+                    path="/admin-dashboard/:adminId"
                     element={user?.role === 'Admin' ? <AdminPage /> : <Navigate to="/" />}
                 />
                 <Route
-                    path="/admin/requests"
+                    path="/admin/:adminId/requests"
                     element={user?.role === 'Admin' ? <Requests /> : <Navigate to="/" />}
                 />
                 <Route
-                    path="/admin/create-course"
+                    path="/admin/:adminId/create-course"
                     element={user?.role === 'Admin' ? <CourseCreatePage /> : <Navigate to="/" />}
                 />
-                <Route path="/create-request" element={<CreateRequestPage />} />
+                <Route
+                    path="/admin/courses-active"
+                    element={user?.role === 'Admin' ? <ActiveCourses /> : <Navigate to="/" />}
+                />
+                <Route path="/create-request/:managerId" element={<CreateRequestPage />} />
+                <Route path="/assignment/:assignmentId" element={<AssignmentPage />} />
                 <Route path="*" element={<Navigate to={roleRedirect(user?.role)} />} />
             </Routes>
         </Router>
