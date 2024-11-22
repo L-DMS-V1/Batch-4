@@ -3,9 +3,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -17,7 +15,7 @@ public class CourseProgress {
     private int progressId;
 
     @Column(nullable = false)
-    private String lastAccessedDate = new Date().toString();
+    private LocalDate lastAccessedDate = LocalDate.now();
 
     @Column(nullable = false)
     private String status;
@@ -27,9 +25,7 @@ public class CourseProgress {
     @JsonBackReference
     private CourseAssignment courseAssignment;
 
-    private int percentage;
-    public void setLastAccessedDate() {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        this.lastAccessedDate = formatter.format(new Date());
-    }
+    @Column(nullable = false, length = 255)
+    private String completedModules;
+
 }

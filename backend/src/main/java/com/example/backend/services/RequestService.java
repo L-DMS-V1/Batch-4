@@ -34,7 +34,11 @@ public class RequestService {
         requestForm.setCourseName(requestFormDto.getCourseName());
         requestForm.setDescription(requestFormDto.getDescription());
         requestForm.setDuration(requestFormDto.getDuration());
-        requestForm.setRequiredEmployees(requestFormDto.getRequiredEmployees());
+        List<Integer> requiredEmployeeIds = new ArrayList<>();
+        for(Integer userId : requestFormDto.getRequiredEmployees()){
+            requiredEmployeeIds.add(employeeRepository.findByUserId(userId).getEmployeeId());
+        }
+        requestForm.setRequiredEmployees(requiredEmployeeIds);
         requestForm.setRequestingManager(managerRepository.findByManagerId(requestFormDto.getManagerId()));
         requestForm.setStatus("PENDING");
         return requestRepository.save(requestForm);

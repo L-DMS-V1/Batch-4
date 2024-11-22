@@ -24,4 +24,9 @@ public class Feedback {
     @JoinColumn(name = "employeeId", nullable = false)
     @JsonBackReference
     private Employee employee;
+
+    @ManyToOne
+    @JoinColumn(name="courseId", nullable = false)
+    @JsonBackReference
+    private Course course;
 }

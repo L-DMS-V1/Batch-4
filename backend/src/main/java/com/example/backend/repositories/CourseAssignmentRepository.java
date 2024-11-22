@@ -23,4 +23,6 @@ public interface CourseAssignmentRepository extends JpaRepository<CourseAssignme
     @Query("UPDATE CourseAssignment r SET r.status = :status WHERE r.id = :assignmentId")
     int updateCourseAssignmentStatus(@Param("assignmentId") Integer assignmentId,@Param("status") String status);
 
+    @Query("SELECT ca.employee FROM CourseAssignment ca WHERE ca.assignmentId = :assignmentId")
+    Employee findEmployeeByAssignmentId(@Param("assignmentId") Integer assignmentId);
 }

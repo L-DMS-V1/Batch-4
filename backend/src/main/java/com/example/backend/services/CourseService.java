@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,9 +71,9 @@ public class CourseService {
     public CourseProgress initiateProgressRecord(CourseAssignment assignment){
         CourseProgress progress = new CourseProgress();
         progress.setCourseAssignment(assignment);
-        progress.setPercentage(0);
-        progress.setStatus("Pending");
-        progress.setLastAccessedDate();
+        progress.setCompletedModules("0".repeat(assignment.getCourse().getResourceLinks().split(",").length));
+        progress.setStatus("PENDING");
+        progress.setLastAccessedDate(LocalDate.now());
         return courseProgressRepository.save(progress);
     }
 
@@ -99,4 +98,44 @@ public class CourseService {
         }
     }
 
+    public List<CourseProgress> findAllProgresses() {
+        return courseProgressRepository.findAll();
+    }
+
+    public String findCourseNameByProgressId(int progressId) {
+        return courseProgressRepository.findCourseNameByProgressId(progressId);
+    }
+
+    @Transactional
+    public void completeModule(Integer progressId, Integer moduleIndex) {
+        // Fetch the current bit string (completedModules) from the database.
+        String completedModules = courseProgressRepository.findById(progressId)
+                .orElseThrow(() -> new RuntimeException("Progress record not found for ID: " + progressId))
+                .getCompletedModules();
+
+        // Validate the moduleIndex is within the bounds of the string.
+        if (moduleIndex < 0 || moduleIndex >= completedModules.length()) {
+            throw new IllegalArgumentException("Invalid moduleIndex: " + moduleIndex);
+        }
+
+        // Create the updated bit string, marking the specific module as completed ('1').
+        String updatedBitString = completedModules.substring(0, moduleIndex) + '1' + completedModules.substring(moduleIndex + 1);
+
+        // Update the progress record in the database.
+        int rowsAffected = courseProgressRepository.updateProgress(progressId, updatedBitString);
+
+        // If no rows were affected, it means the update didn't happen; throw an error.
+        if (rowsAffected == 0) {
+            throw new RuntimeException("Failed to update progress. No matching record found.");
+        }
+        if(updatedBitString.indexOf('0') == -1){
+            courseProgressRepository.updateStatus(progressId, "COMPLETED");
+            CourseAssignment assignment = courseProgressRepository.findCourseAssignment_AssignmentIdByProgressId(progressId);
+            courseAssignmentRepository.updateCourseAssignmentStatus(assignment.getAssignmentId(), "COMPLETED");
+        }
+    }
+
+    public Employee findEmployeeByAssignmentId(Integer assignmentId) {
+        return courseAssignmentRepository.findEmployeeByAssignmentId(assignmentId);
+    }
 }
