@@ -138,4 +138,12 @@ public class CourseService {
     public Employee findEmployeeByAssignmentId(Integer assignmentId) {
         return courseAssignmentRepository.findEmployeeByAssignmentId(assignmentId);
     }
+
+    public List<Course> findAllCourses() {
+        return courseRepository.findAll();
+    }
+
+    public Course findCourseByCourseId(Integer courseId) {
+        return courseRepository.findByCourseId(courseId);
+    }
 }
