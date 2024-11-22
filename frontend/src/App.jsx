@@ -11,6 +11,8 @@ import Requests from './components/Requests';
 import CourseCreatePage from './components/CourseCreatePage';
 import ActiveCourses from './components/ActiveCourses';
 import AssignmentPage from './components/AssignmentPage';
+import EmployeeProgress from './components/EmployeeProgress';
+import FeedbackPage from './components/FeedbackPage';
 
 function App() {
     const [user, setUser] = useState(null);
@@ -58,7 +60,9 @@ function App() {
                     element={user?.role === 'Admin' ? <ActiveCourses /> : <Navigate to="/" />}
                 />
                 <Route path="/create-request/:managerId" element={<CreateRequestPage />} />
-                <Route path="/assignment/:assignmentId" element={<AssignmentPage />} />
+                <Route path="/:employeeId/assignment/:assignmentId" element={<AssignmentPage />} />
+                <Route path="/progress" element={<EmployeeProgress />} />
+                <Route path="/:employeeId/feedback/:assignmentId" element={<FeedbackPage />} />
                 <Route path="*" element={<Navigate to={roleRedirect(user?.role)} />} />
             </Routes>
         </Router>

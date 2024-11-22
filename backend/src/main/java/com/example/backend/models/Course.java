@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -42,6 +44,10 @@ public class Course {
 
     @Column(nullable = false)
     private LocalDate createdAt;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private List<Feedback> feedbacks;
 
 //    public Course(int courseId) {
 //        this.courseId = courseId;

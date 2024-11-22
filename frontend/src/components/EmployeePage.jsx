@@ -26,7 +26,7 @@ const EmployeePage = () => {
             {
               method: 'GET',
               headers: {
-                'Authorization': `Bearer ${authToken}`,
+                Authorization: `Bearer ${authToken}`,
                 'Content-Type': 'application/json',
               },
             }
@@ -36,22 +36,23 @@ const EmployeePage = () => {
           }
           const data = await response.json();
           console.log('Fetched Assignments:', data);
-          setTotalAssigned(data); // Update the state without triggering unnecessary re-renders
-          let ongoing = 0;
-          data.forEach(element => {
-            if(element.status == "ONGOING"){
-              ongoing++;
-            }
-          });
+    
+          setTotalAssigned(data); // Update the state with all assignments
+          
+          // Calculate counts for ongoing and completed
+          const ongoing = data.filter((assignment) => assignment.status === 'ONGOING').length;
+          const completed = data.filter((assignment) => assignment.status === 'COMPLETED').length;
+    
           setTotalOngoing(ongoing);
-          setTotalCompleted(totalAssigned.length - ongoing)
+          setTotalCompleted(completed);
         } catch (error) {
           console.error('Error fetching assignments:', error);
         }
       };
     
       if (employeeId) fetchAssignment();
-    }, [employeeId, authToken]); // Remove totalAssigned from dependencies
+    }, [employeeId, authToken]); // Remove unnecessary dependencies
+     // Remove totalAssigned from dependencies
     
   const handleStartCourse = async (assignment) => {
     try {
@@ -79,16 +80,17 @@ const EmployeePage = () => {
           //   )
           // );
 
-          navigate(`/assignment/${assignmentId}`)
+          navigate(`${employeeId}/assignment/${assignmentId}`)
 
         } else {
           const errorData = await response.json();
           alert(`Failed to start course: ${errorData.message}`);
         }
       }else if(assignment.status === "ONGOING"){
-        navigate(`/assignment/${assignmentId}`)
+        navigate(`/${employeeId}/assignment/${assignmentId}`)
       }else if(assignment.status === "COMPLETED"){
-        navigate(`/feedback/${assignmentId}`)
+        console.log("hii")
+        navigate(`/${employeeId}/feedback/${assignmentId}`)
       }
     } catch (error) {
       console.error('Error starting the course:', error);
@@ -114,15 +116,15 @@ const EmployeePage = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div className="p-6 bg-[#6A9AB0] text-white rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">
             <p className="font-semibold">Total Courses Assigned</p>
-            {totalAssigned.length}
+            <span className='text-3xl font-bold mt-4'>{totalAssigned.length}</span>
           </div>
           <div className="p-6 bg-[#3A6D8C] text-white rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">
             <p className="font-semibold">Total Courses Ongoing</p>
-            {totalOngoing}
+            <span className='text-3xl font-bold mt-4'>{totalOngoing}</span>
           </div>
           <div className="p-6 bg-[#001F3F] text-white rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">
             <p className="font-semibold">Total Courses Completed</p>
-            {totalCompleted}
+            <span className='text-3xl font-bold mt-4'>{totalCompleted}</span>
           </div>
         </div>
 
@@ -144,7 +146,7 @@ const EmployeePage = () => {
               </p>
               <p>
                 <strong>Progress:</strong>{' '}
-                {assignment.courseProgress !== null ? `${assignment.courseProgress.percentage}%` : 'Not Started'}
+                {assignment.courseProgress !== null ? `${((assignment.courseProgress.completedModules.split(1).length - 1)*100/assignment.courseProgress.completedModules.split('').length).toFixed(0)}%` : 'Not Started'}
               </p>
               <button
                 onClick={() => handleStartCourse(assignment)}
@@ -154,7 +156,7 @@ const EmployeePage = () => {
                     : 'bg-blue-500 hover:bg-blue-700'
                 }`}
               >
-                { assignment.status === 'ONGOING' ? 'Continue': assignment.status === 'COMPLETED' ? 'Submit Feedback' : 'Start Course' }
+                { assignment.status === 'ONGOING' ? 'Continue': assignment.status === 'COMPLETED' ? 'Submit Feedback' : assignment.status ==='CLOSED'? 'CLOSED': 'Start Course' }
               </button>
             </div>
           ))}

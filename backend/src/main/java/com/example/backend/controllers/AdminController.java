@@ -3,10 +3,12 @@ package com.example.backend.controllers;
 import com.example.backend.DTOs.CourseAssignmentDto;
 import com.example.backend.DTOs.CourseCreationResponse;
 import com.example.backend.DTOs.CourseDto;
+import com.example.backend.DTOs.ProgressDataDto;
 import com.example.backend.models.*;
 import com.example.backend.services.AdminService;
 import com.example.backend.services.CourseService;
 import com.example.backend.services.RequestService;
+import com.example.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,10 @@ public class AdminController {
     private CourseService courseService;
     @Autowired
     private AdminService adminService;
+
+    @Autowired
+    private UserService userService;
+
     @GetMapping("/request/all")
     @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<?> findAllRequestsMade(){
@@ -102,4 +108,55 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: "+ e.getMessage());
         }
     }
+    @GetMapping("/progress/complete")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<?> getProgressData() {
+        try {
+            // Fetch all course progresses
+            List<CourseProgress> courseProgresses = courseService.findAllProgresses();
+
+            // Initialize the response list
+            List<ProgressDataDto> res = new ArrayList<>();
+
+            // Iterate through each CourseProgress object
+            for (CourseProgress courseProgress : courseProgresses) {
+                // Ensure null safety for nested properties
+                String courseName = courseService.findCourseNameByProgressId(courseProgress.getProgressId());
+                String userName = courseProgress.getCourseAssignment() != null &&
+                        courseProgress.getCourseAssignment().getEmployee() != null &&
+                        courseProgress.getCourseAssignment().getEmployee().getUser() != null
+                        ? courseProgress.getCourseAssignment().getEmployee().getUser().getUsername()
+                        : "Unknown User";
+
+                // Create a DTO and populate its fields
+                ProgressDataDto progressDataDto = new ProgressDataDto();
+                String completedModules = courseProgress.getCompletedModules();
+                int numberOfCompletedModules = 0;
+                int numberOfModules = completedModules.length();
+                for(int i = 0; i < numberOfModules; i++){
+                    if(completedModules.charAt(i) == '1'){
+                        numberOfCompletedModules++;
+                    }
+                }
+                double percentage = (numberOfCompletedModules * 100.0)/numberOfModules;
+                progressDataDto.setProgress(percentage);
+                progressDataDto.setCourseName(courseName != null ? courseName : "Unknown Course");
+                progressDataDto.setEmployeeName(userName);
+
+                // Add the DTO to the response list
+                res.add(progressDataDto);
+
+                // Debug log for the DTO
+                System.out.println(progressDataDto);
+            }
+
+            // Return the response with a 200 status
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            // Log the error and return an appropriate response
+            System.err.println("Error while processing: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: " + e.getMessage());
+        }
+    }
+
 }
