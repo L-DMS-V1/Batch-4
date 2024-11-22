@@ -8,6 +8,9 @@ const AdminPage = () => {
   const handleNavigate = () => {
     navigate(`/admin/${adminId}/requests`);
   };
+  const handleClick = () => {
+    navigate(`/feedbacks/all`);
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-center">
@@ -20,6 +23,13 @@ const AdminPage = () => {
           className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105"
         >
           Go to Requests
+        </button>
+        <br />
+        <button
+          onClick={handleClick}
+          className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+        >
+          Go to Feedbacks
         </button>
       </div>
     </div>

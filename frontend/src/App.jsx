@@ -13,6 +13,8 @@ import ActiveCourses from './components/ActiveCourses';
 import AssignmentPage from './components/AssignmentPage';
 import EmployeeProgress from './components/EmployeeProgress';
 import FeedbackPage from './components/FeedbackPage';
+import CourseFeedbackPage from './components/CourseFeedbackPage';
+import FeedbackViewingPage from './components/FeedbackViewingPage';
 
 function App() {
     const [user, setUser] = useState(null);
@@ -63,6 +65,8 @@ function App() {
                 <Route path="/:employeeId/assignment/:assignmentId" element={<AssignmentPage />} />
                 <Route path="/progress" element={<EmployeeProgress />} />
                 <Route path="/:employeeId/feedback/:assignmentId" element={<FeedbackPage />} />
+                <Route path="/course-feedback/:courseId" element={<CourseFeedbackPage />} />
+                <Route path="/feedbacks/all" element={<FeedbackViewingPage />} />
                 <Route path="*" element={<Navigate to={roleRedirect(user?.role)} />} />
             </Routes>
         </Router>

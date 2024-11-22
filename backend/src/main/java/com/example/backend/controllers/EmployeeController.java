@@ -30,7 +30,7 @@ public class EmployeeController {
     @PreAuthorize("hasRole('Employee')")
     public ResponseEntity<?> getAllCourseAssignments(@PathVariable Integer employeeId){
         Optional<Employee> employee = employeeService.findEmployee(employeeId);
-        if(employee == null){
+        if(employee.isEmpty()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Employee not found with ID: "+ employeeId);
         }
         try {

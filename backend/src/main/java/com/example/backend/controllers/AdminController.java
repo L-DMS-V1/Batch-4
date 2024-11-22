@@ -5,10 +5,7 @@ import com.example.backend.DTOs.CourseCreationResponse;
 import com.example.backend.DTOs.CourseDto;
 import com.example.backend.DTOs.ProgressDataDto;
 import com.example.backend.models.*;
-import com.example.backend.services.AdminService;
-import com.example.backend.services.CourseService;
-import com.example.backend.services.RequestService;
-import com.example.backend.services.UserService;
+import com.example.backend.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +32,8 @@ public class AdminController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private FeedbackService feedbackService;
 
     @GetMapping("/request/all")
     @PreAuthorize("hasRole('Admin')")
@@ -156,6 +155,27 @@ public class AdminController {
             // Log the error and return an appropriate response
             System.err.println("Error while processing: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/courses/all")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<?> getAllCourses(){
+        List<Course> courses = courseService.findAllCourses();
+        return ResponseEntity.status(HttpStatus.OK).body(courses);
+    }
+    @GetMapping("/feedbacks/{courseId}")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<?> getAllFeedbacks(@PathVariable Integer courseId){
+        Course course = courseService.findCourseByCourseId(courseId);
+        if(course == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No course for the courseId: "+ courseId);
+        }
+        try{
+            List<Feedback> feedbacks = feedbackService.getAllFeedBacksForACourse(courseId);
+            return ResponseEntity.status(HttpStatus.OK).body(feedbacks);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while Processing.");
         }
     }
 
