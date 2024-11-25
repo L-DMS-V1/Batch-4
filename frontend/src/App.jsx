@@ -24,9 +24,9 @@ function App() {
     };
 
     const roleRedirect = (role) => {
-        if (role === 'Manager') return '/training-requests';
-        if (role === 'Employee') return '/employee-dashboard';
-        if (role === 'Admin') return '/admin-dashboard';
+        if (role === 'Manager') return '/training-requests/:managerId';
+        if (role === 'Employee') return '/employee-dashboard/:employeeId';
+        if (role === 'Admin') return '/admin-dashboard/:adminId';
         return '/';
     };
 
@@ -74,3 +74,5 @@ function App() {
 }
 
 export default App;
+
+
