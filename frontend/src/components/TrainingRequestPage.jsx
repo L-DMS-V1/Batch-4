@@ -1,43 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function TrainingRequestPage() {
-  const {managerId} = useParams();
+  const { managerId } = useParams();
   const navigate = useNavigate();
-  const [requests, setRequests] = useState([])
+  const [requests, setRequests] = useState([]);
   const [pendingRequests, setPendingRequests] = useState([]);
   const [completedRequests, setCompletedRequests] = useState([]);
   const [selectedRequest, setSelectedRequest] = useState(null);
 
   const authToken = document.cookie
-    .split('; ')
-    .find(row => row.startsWith('authToken='))
-    ?.split('=')[1];
-  
+    .split("; ")
+    .find((row) => row.startsWith("authToken="))
+    ?.split("=")[1];
+
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const response = await fetch(`http://localhost:9004/api/manager/${managerId}/request/all`, 
+        const response = await fetch(
+          `http://localhost:9004/api/manager/${managerId}/request/all`,
           {
-            method: 'GET',
+            method: "GET",
             headers: {
-              'Authorization': `Bearer ${authToken}`,
-              'Content-Type': 'application/json',
+              Authorization: `Bearer ${authToken}`,
+              "Content-Type": "application/json",
             },
           }
         );
         const data = await response.json();
-        console.log('Fetched Requests:', data); // Log the fetched data
-        setRequests(data)
-        data.forEach(request => {
-          if(request["status"] === "PENDING"){
-            setPendingRequests([...pendingRequests, request])
-          }else{
-            setCompletedRequests([...completedRequests, request])
+        console.log("Fetched Requests:", data); // Log the fetched data
+        setRequests(data);
+        data.forEach((request) => {
+          if (request["status"] === "PENDING") {
+            setPendingRequests([...pendingRequests, request]);
+          } else {
+            setCompletedRequests([...completedRequests, request]);
           }
         });
       } catch (error) {
-        console.error('Error fetching requests:', error);
+        console.error("Error fetching requests:", error);
       }
     };
 
@@ -62,20 +63,25 @@ export default function TrainingRequestPage() {
 
       {/* Request Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
-        {['Total Requests', 'Completed Requests', 'Pending Requests'].map((text, index) => (
-          <div
-            key={index}
-            className="bg-[#6A9AB0] p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 ease-in-out transform hover:scale-105 border-l-4 border-[#001F3F] hover:border-[#6A9AB0] text-white"
-          >
-            <h2 className="text-[#001F3F] text-lg font-semibold mb-1">{text}</h2>
-            <p className="text-4xl font-bold text-[#001F3F]">{index === 0
-                ? requests.length
-                : index === 1
-                ? requests.filter((req) => req.status === 'COMPLETED').length
-                : requests.filter((req) => req.status === 'PENDING').length}
-            </p>
-          </div>
-        ))}
+        {["Total Requests", "Completed Requests", "Pending Requests"].map(
+          (text, index) => (
+            <div
+              key={index}
+              className="bg-[#6A9AB0] p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 ease-in-out transform hover:scale-105 border-l-4 border-[#001F3F] hover:border-[#6A9AB0] text-white"
+            >
+              <h2 className="text-[#001F3F] text-lg font-semibold mb-1">
+                {text}
+              </h2>
+              <p className="text-4xl font-bold text-[#001F3F]">
+                {index === 0
+                  ? requests.length
+                  : index === 1
+                  ? requests.filter((req) => req.status === "COMPLETED").length
+                  : requests.filter((req) => req.status === "PENDING").length}
+              </p>
+            </div>
+          )
+        )}
       </div>
 
       {/* Create New Request Button */}
@@ -92,7 +98,9 @@ export default function TrainingRequestPage() {
       <table className="table-auto w-full bg-white mt-8 shadow-lg rounded-lg overflow-hidden border border-gray-200">
         <thead>
           <tr className="bg-gradient-to-r from-[#3A6D8C] to-[#16423C] text-white">
-            <th className="px-6 py-4 text-left font-semibold">Training Program</th>
+            <th className="px-6 py-4 text-left font-semibold">
+              Training Program
+            </th>
             <th className="px-6 py-4 text-left font-semibold">Duration</th>
             <th className="px-6 py-4 text-left font-semibold">Status</th>
             {/* <th className="px-6 py-4 text-left font-semibold">Created Date</th> */}
@@ -101,15 +109,22 @@ export default function TrainingRequestPage() {
         </thead>
         <tbody>
           {requests.map((request, index) => (
-            <tr key={index} className="hover:bg-[#E9EFEC] transition-colors duration-200 ease-in-out">
-              <td className="border px-6 py-4 text-gray-700">{request.courseName}</td>
-              <td className="border px-6 py-4 text-gray-700">{request.duration}</td>
+            <tr
+              key={index}
+              className="hover:bg-[#E9EFEC] transition-colors duration-200 ease-in-out"
+            >
+              <td className="border px-6 py-4 text-gray-700">
+                {request.courseName}
+              </td>
+              <td className="border px-6 py-4 text-gray-700">
+                {request.duration}
+              </td>
               <td className="border px-6 py-4">
                 <span
                   className={`py-1 px-3 rounded-full text-sm font-semibold ${
-                    request.status === 'COMPLETED'
-                      ? 'bg-green-200 text-green-800'
-                      : 'bg-yellow-200 text-yellow-800'
+                    request.status === "COMPLETED"
+                      ? "bg-green-200 text-green-800"
+                      : "bg-yellow-200 text-yellow-800"
                   }`}
                 >
                   {request.status}
@@ -133,16 +148,27 @@ export default function TrainingRequestPage() {
       {selectedRequest && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full transform transition-all duration-300 ease-out border-2 border-[#6A9AB0]">
-            <h2 className="text-2xl font-bold mb-6 text-[#001F3F]">Request Details</h2>
+            <h2 className="text-2xl font-bold mb-6 text-[#001F3F]">
+              Request Details
+            </h2>
             {/* <p><strong>Employee ID:</strong> {selectedRequest.employeeId}</p>
             <p><strong>Employee Name:</strong> {selectedRequest.employeeName}</p> */}
-            <p><strong>Training Program:</strong> {selectedRequest.courseName}</p>
-            <p><strong>Outcomes:</strong> {selectedRequest.outcomes}</p>
-            <p><strong>Concepts:</strong> {selectedRequest.keyConcepts}</p>
-            <p><strong>Duration:</strong> {selectedRequest.duration}</p>
+            <p>
+              <strong>Training Program:</strong> {selectedRequest.courseName}
+            </p>
+            {/* <p><strong>Outcomes:</strong> {selectedRequest.outcomes}</p> */}
+            {/* <p><strong>Concepts:</strong> {selectedRequest.keyConcepts}</p> */}
+            <p>
+              <strong>Duration:</strong> {selectedRequest.duration}
+            </p>
             {/* <p><strong>Position:</strong> {selectedRequest.employeePosition}</p> */}
-            <p><strong>Resource Links:</strong> {selectedRequest.resourceLinks}</p>
-            <p><strong>Other Links:</strong> {selectedRequest.otherLinks}</p>
+            {/* <p><strong>Resource Links:</strong> {selectedRequest.resourceLinks}</p> */}
+            <p>
+              <strong>Employees :</strong>{" "}
+              {selectedRequest.requiredEmployees
+                .map((employeeId) => `Employee${employeeId}`)
+                .join(", ")}
+            </p>
             <button
               onClick={closeDetails}
               className="bg-red-500 text-white px-5 py-2 rounded mt-6 hover:bg-red-600 transition-all duration-300 ease-in-out"
