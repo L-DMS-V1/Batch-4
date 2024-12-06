@@ -8,9 +8,7 @@ const Home = () => {
     navigate("/login");
   };
 
-  const handleSignupClick = () => {
-    navigate("/signup");
-  };
+ 
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -38,12 +36,7 @@ const Home = () => {
           >
             Login
           </button>
-          <button
-            className="bg-[#3A6D8C] text-white font-semibold px-6 py-2 rounded-full shadow-md hover:bg-[#001F3F] transition duration-300 transform hover:scale-105"
-            onClick={handleSignupClick}
-          >
-            Signup
-          </button>
+          
         </div>
       </div>
       {/* Background Image with Dark Overlay and Side-Aligned Text */}

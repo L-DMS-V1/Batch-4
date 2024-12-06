@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Signup = () => {
@@ -9,8 +9,78 @@ const Signup = () => {
   const [role, setRole] = useState("employee");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [managerId, setManagerId] = useState();
+  const [managers, setManagers] = useState([]);
+  const [passwordError, setPasswordError] = useState("");
 
   const navigate = useNavigate();
+  
+  const authToken = document.cookie
+  .split("; ")
+  .find((row) => row.startsWith("authToken="))
+  ?.split("=")[1];
+
+
+  useEffect(() => {
+    const fetchManagers = async () => {
+      try {
+        const response = await fetch("http://localhost:9004/api/admin/managers/all", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }); // Replace with actual endpoint
+        if (response.ok) {
+          const data = await response.json();
+          setManagers(
+            data.map((manager) => ({
+              value: manager.managerId,
+              label: `Manager ID: ${manager.managerId}`, // Adjust based on your manager object structure
+            }))
+          );
+        } else {
+          console.error("Failed to fetch managers");
+        }
+      } catch (error) {
+        console.error("Error fetching managers:", error);
+      }
+    };
+
+    if (role === "employee") {
+      fetchManagers();
+      console.log(managers)
+    }
+  }, [role]);
+
+
+  const validatePassword = (password) => {
+    const minLength = /.{8,}/;
+    const hasUpperCase = /[A-Z]/;
+    const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/;
+    const hasNumber = /[0-9]/;
+
+    if (!minLength.test(password)) {
+      return "Password must be at least 8 characters long.";
+    }
+    if (!hasUpperCase.test(password)) {
+      return "Password must contain at least one uppercase letter.";
+    }
+    if (!hasSymbol.test(password)) {
+      return "Password must contain at least one symbol.";
+    }
+    if (!hasNumber.test(password)) {
+      return "Password must contain at least one number.";
+    }
+
+    return ""; // No errors
+  };
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+    const validationError = validatePassword(value);
+    setPasswordError(validationError);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,27 +93,45 @@ const Signup = () => {
     setError("");
     setSuccess("");
 
-    try {
-      const response = await fetch("http://localhost:9004/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-          role,
-        }),
-      });
+    
 
+    try {
+      let response;
+      if(role == "employee"){
+        response = await fetch("http://localhost:9004/api/auth/register/employee", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify({
+            username,
+            email,
+            password,
+            role,
+            managerId
+          }),
+        });  
+      }else if(role == "manager"){
+        response = await fetch("http://localhost:9004/api/auth/register/manager", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify({
+            username,
+            email,
+            password,
+            role,
+          }),
+        });
+      }
+      
       if (response.ok) {
         setSuccess("Account created successfully! Redirecting to login...");
-        setTimeout(() => {
-          navigate("/login", {
-            state: { message: "User registered successfully!" },
-          });
-        }, 2000); // Delay before redirecting
+        setError("")
+        
       } else {
         const errorData = await response.json();
         setError(errorData.message || "Failed to create account.");
@@ -105,10 +193,11 @@ const Signup = () => {
             type="password"
             id="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handlePasswordChange}
             className="border border-gray-300 rounded p-2 w-full"
             required
           />
+          {passwordError && <p className="text-red-500 text-sm mt-2">{passwordError}</p>}
         </div>
         <div className="mb-4">
           <label
@@ -141,8 +230,33 @@ const Signup = () => {
           >
             <option value="employee">Employee</option>
             <option value="manager">Manager</option>
-            <option value="admin">Admin</option>
           </select>
+          {role === "employee" && (
+            <div className="my-6">
+              <label
+                className="block text-sm font-medium text-gray-700 mb-2"
+                htmlFor="managerId"
+              >
+                Assigned Manager
+              </label>
+              <select
+                id="managerId"
+                value={managerId || ""}
+                onChange={(e) => setManagerId(e.target.value)}
+                className="border border-gray-300 rounded p-2 w-full"
+              >
+                <option value="" disabled>
+                  Select a manager...
+                </option>
+                {managers.map((manager) => (
+                  <option key={manager.value} value={manager.value}>
+                    {manager.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
         </div>
         <button
           type="submit"
@@ -150,13 +264,7 @@ const Signup = () => {
         >
           Create Account
         </button>
-        <p className="m-3">
-          Already have an account?{" "}
-          <Link to="/login" className="text-[#001F3F] font-semibold underline hover:text-blue-500">
-  Login
-</Link>
-
-        </p>
+        
         {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
         {success && <p className="text-green-500 text-sm mt-4">{success}</p>}
       </form>

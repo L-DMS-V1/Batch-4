@@ -48,6 +48,16 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: " + e.getMessage());
         }
     }
+    @GetMapping("/managers/all")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<?> findAllManagers(){
+        try{
+            List<Manager> managers = managerService.getAllManagers();
+            return ResponseEntity.status(HttpStatus.OK).body(managers);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: " + e.getMessage());
+        }
+    }
     @GetMapping("/assignmentRequests/all")
     @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<?> findAllAssignmentRequestsMade(){
