@@ -30,7 +30,8 @@ export default function AssignmentRequests() {
         }
 
         const data = await response.json();
-        setAssignmentRequests(data);
+        const pendingRequests = data.filter((item) => item.status === "PENDING");
+        setAssignmentRequests(pendingRequests);
       } catch (error) {
         console.error("Error fetching assignment requests:", error);
         setMessage("Failed to fetch assignment requests. Please try again.");

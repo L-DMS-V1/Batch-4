@@ -35,8 +35,7 @@ const Home = () => {
             onClick={handleLoginClick}
           >
             Login
-          </button>
-          
+          </button>        
         </div>
       </div>
       {/* Background Image with Dark Overlay and Side-Aligned Text */}
