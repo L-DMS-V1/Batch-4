@@ -6,6 +6,10 @@ const AdminPage = () => {
   const navigate = useNavigate();
   const { adminId } = useParams();
 
+  const handleNavigateToSignUp = ()=>{
+    navigate(`/signup`);
+  }
+
   const handleNavigateToRequests = () => {
     navigate(`/admin/${adminId}/requests`);
   };
@@ -119,6 +123,18 @@ const AdminPage = () => {
               className="bg-white text-darkBlue py-2 px-6 rounded-full font-medium shadow-lg transform hover:bg-lightBlue hover:text-mediumBlue transition duration-300 ease-in-out"
             >
               Go to Assignment Requests
+            </button>
+          </div>
+          <div className="bg-gradient-to-r from-accentBlue to-mediumBlue rounded-lg shadow-xl p-8 flex-1 flex flex-col items-center hover:scale-105 transition duration-300 ease-in-out">
+            <h3 className="text-white text-xl font-semibold mb-4">
+              Register a User
+            </h3>
+            
+            <button
+              onClick={handleNavigateToSignUp}
+              className="bg-white text-darkBlue py-2 px-6 rounded-full font-medium shadow-lg transform hover:bg-lightBlue hover:text-mediumBlue transition duration-300 ease-in-out"
+            >
+              Register User
             </button>
           </div>
         </section>

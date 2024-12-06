@@ -1,5 +1,6 @@
 package com.example.backend.controllers;
 
+import com.example.backend.DTOs.EmployeeRegistrationDto;
 import com.example.backend.DTOs.JwtResponse;
 import com.example.backend.DTOs.UserLoginDto;
 import com.example.backend.DTOs.UserRegistrationDTO;
@@ -40,8 +41,10 @@ public class UserController {
     private JwtUtil jwtUtil;
 
     // For User Registration
-    @PostMapping("/register")
-    public ResponseEntity<?> registerNewUser(@RequestBody UserRegistrationDTO userRegistrationDto, BindingResult bindingResult){
+
+    @PostMapping("/register/manager")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<?> registerNewManager(@RequestBody UserRegistrationDTO userRegistrationDto, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Fields: " + bindingResult.getFieldErrors());
         }
@@ -53,7 +56,27 @@ public class UserController {
                     .body("Error: All required fields must be filled.");
         }
         try{
-            return userService.registerUser(userRegistrationDto);
+            return ResponseEntity.status(HttpStatus.OK).body(userService.registerUser(userRegistrationDto));
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during registration: " + e.getMessage());
+        }
+    }
+    @PostMapping("/register/employee")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<?> registerNewEmployee(@RequestBody EmployeeRegistrationDto userRegistrationDto, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Fields: " + bindingResult.getFieldErrors());
+        }
+        if (isEmptyField(userRegistrationDto.getUsername()) ||
+                isEmptyField(userRegistrationDto.getPassword()) ||
+                isEmptyField(userRegistrationDto.getEmail()) ||
+                isEmptyField(userRegistrationDto.getRole()) ||
+                isEmptyField(userRegistrationDto.getManagerId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error: All required fields must be filled.");
+        }
+        try{
+            return ResponseEntity.status(HttpStatus.OK).body(userService.registerEmployee(userRegistrationDto));
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during registration: " + e.getMessage());
         }
