@@ -1,7 +1,10 @@
+
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeftIcon } from "lucide-react";
 
-export default function FeedbackViewingPage() {
+const FeedbackViewingPage = () => {
   const [courses, setCourses] = useState([]);
   const navigate = useNavigate();
 
@@ -41,34 +44,51 @@ export default function FeedbackViewingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-teal-50 to-blue-50 p-8 flex flex-col items-center">
-      <div className="w-full max-w-3xl bg-white shadow-2xl rounded-3xl p-8 border border-gray-300">
-        <h2 className="text-4xl font-extrabold text-teal-700 mb-8">
-          All Courses
-        </h2>
-
-        <div className="space-y-6">
-          {courses.map((course) => (
-            <div
-              key={course.courseId}
-              className="bg-white border border-gray-200 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out"
+    <div className="min-h-screen bg-lightGray py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="bg-white shadow-2xl rounded-2xl overflow-hidden">
+          <div className="px-6 py-8 sm:px-10 relative">
+            {/* Back Arrow Button */}
+            <button
+              onClick={() => navigate(-1)}
+              className="absolute left-6 top-6 bg-accentBlue text-white p-3 rounded-full hover:bg-mediumBlue transition-colors"
             >
-              <h3 className="text-2xl font-semibold text-teal-800 mb-4">
-                {course.courseName}
-              </h3>
+              <ArrowLeftIcon size={28} />
+            </button>
 
-              <div className="flex justify-end">
-                <button
-                  onClick={() => handleViewFeedback(course.courseId)}
-                  className="bg-gradient-to-r from-teal-400 to-teal-600 text-white font-semibold py-2 px-6 rounded-full shadow-lg hover:bg-teal-700 transform hover:scale-105 transition duration-300 ease-in-out"
+            <h1 className="text-5xl font-extrabold text-darkBlue mb-4 text-center">
+              Course Feedback
+            </h1>
+            <p className="text-xl font-semibold text-gray-600 text-center mb-8">
+              View feedback for all available courses
+            </p>
+
+            <div className="space-y-8">
+              {courses.map((course) => (
+                <div
+                  key={course.courseId}
+                  className="bg-white border border-gray-200 rounded-xl shadow-md p-6 hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-2"
                 >
-                  View Feedback
-                </button>
-              </div>
+                  <h3 className="text-2xl font-extrabold text-accentBlue mb-4">
+                    {course.courseName}
+                  </h3>
+                  <p className="text-lg text-gray-600 mb-6">
+                    This course is designed to give you a comprehensive understanding of its subject.
+                  </p>
+                  <button
+                    onClick={() => handleViewFeedback(course.courseId)}
+                    className="bg-accentBlue text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-mediumBlue transition-colors"
+                  >
+                    View Feedback
+                  </button>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default FeedbackViewingPage;
