@@ -25,7 +25,7 @@ export default function CreateRequestPage() {
       try {
         const token = getAuthToken();
         const response = await fetch(
-          "http://localhost:9004/api/manager/employees/all",
+          `http://localhost:9004/api/manager/${managerId}/employees/allManaged`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

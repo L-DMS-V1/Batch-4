@@ -42,4 +42,19 @@ public class EmployeeService {
         return employee.getEmployeeId();
     }
 
+    public List<UserDto> getAllManagedEmployeeUsers(Integer managerId) {
+        return employeeRepository.findAll().stream()
+                .filter(employee -> employee.getManager().getManagerId()==managerId) // Filter by managerId
+                .map(employee -> {
+                    var user = employee.getUser();
+                    return new UserDto(
+                            user.getUserId(),
+                            user.getUsername(),
+                            user.getEmail(),
+                            user.getRole().getRoleName()
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+
 }
