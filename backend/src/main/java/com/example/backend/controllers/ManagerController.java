@@ -1,9 +1,6 @@
 package com.example.backend.controllers;
 
-import com.example.backend.DTOs.CourseAssignmentDto;
-import com.example.backend.DTOs.RequestFormDto;
-import com.example.backend.DTOs.RequestFormResponse;
-import com.example.backend.DTOs.UserDto;
+import com.example.backend.DTOs.*;
 import com.example.backend.models.*;
 import com.example.backend.services.CourseService;
 import com.example.backend.services.EmployeeService;
@@ -88,5 +85,20 @@ public class ManagerController {
         }
     }
 
+    @GetMapping("/course/{courseId}/available-employees")
+    @PreAuthorize("hasRole('Manager')")
+    public List<Employee> getAvailableEmployees(@PathVariable int courseId) {
+        return courseService.getAvailableEmployees(courseId);
+    }
 
+    @PostMapping("/course/{selectedCourse}/assign")
+    @PreAuthorize("hasRole('Manager')")
+    public ResponseEntity<?> createNewEmployeeAssignmentRequest(@PathVariable Integer selectedCourse, @RequestBody AssignmentRequestDto req){
+        try{
+            courseService.addAssignmentRequest(selectedCourse, req.getEmployeeIds(), req.getManagerId());
+            return ResponseEntity.status(HttpStatus.OK).body("Created Assignment Request Successfully.");
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong in the backend.");
+        }
+    }
 }

@@ -146,11 +146,13 @@ export default function CourseCreatePage() {
   // };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-50 to-indigo-100 p-8">
-      <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg border-t-4 border-indigo-500">
-        <h2 className="text-4xl font-semibold text-center text-gray-800 mb-8">
-          Create a New Course
-        </h2>
+    <div className="min-h-screen bg-gradient-to-r from-[#3A6D8C] to-[#6A9AB0] p-8">
+  <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg border-t-4 border-[#3A6D8C]">
+    <h2 className="text-4xl font-semibold text-center text-gray-800 mb-8">
+      Create a New Course
+    </h2>
+  
+
         <form onSubmit={handleSubmit}>
           {/* Course Name */}
           <div className="mb-6">
@@ -326,12 +328,13 @@ export default function CourseCreatePage() {
           </div>
 
           <div className="text-center">
-            <button
-              type="submit"
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 px-6 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              Create Course
-            </button>
+          <button
+  type="submit"
+  className="w-full bg-[#3A6D8C] hover:bg-[#6A9AB0] text-white py-4 px-6 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3A6D8C]"
+>
+  Create Course
+</button>
+
           </div>
         </form>
       </div>

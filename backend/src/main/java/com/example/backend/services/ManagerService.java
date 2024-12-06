@@ -19,4 +19,8 @@ public class ManagerService {
         }
         return manager.getManagerId();
     }
+
+    public Manager getManagerByManagerId(Integer managerId) {
+        return managerRepository.findByManagerId(managerId);
+    }
 }

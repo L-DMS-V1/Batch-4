@@ -146,15 +146,16 @@ const Signup = () => {
         </div>
         <button
           type="submit"
-          className="w-full bg-[#6A9C89] text-white py-3 rounded-lg hover:bg-[#16423C] transition duration-200"
+          className="w-full bg-[#3A6D8C] text-white py-3 rounded-lg hover:bg-[#6A9AB0] transition duration-200"
         >
           Create Account
         </button>
         <p className="m-3">
           Already have an account?{" "}
-          <Link to="/login" className="mx-2 text-blue-400 font-bold">
-            Login
-          </Link>
+          <Link to="/login" className="text-[#001F3F] font-semibold underline hover:text-blue-500">
+  Login
+</Link>
+
         </p>
         {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
         {success && <p className="text-green-500 text-sm mt-4">{success}</p>}

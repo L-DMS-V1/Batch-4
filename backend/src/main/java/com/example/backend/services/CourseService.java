@@ -2,15 +2,13 @@ package com.example.backend.services;
 
 import com.example.backend.DTOs.CourseDto;
 import com.example.backend.models.*;
-import com.example.backend.repositories.CourseAssignmentRepository;
-import com.example.backend.repositories.CourseProgressRepository;
-import com.example.backend.repositories.CourseRepository;
-import com.example.backend.repositories.EmployeeRepository;
+import com.example.backend.repositories.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +22,8 @@ public class CourseService {
     private CourseAssignmentRepository courseAssignmentRepository;
     @Autowired
     private CourseProgressRepository courseProgressRepository;
+    @Autowired
+    private AssignmentRequestRepository assignmentRequestRepository;
     public Course createCourse(CourseDto courseDto, Admin admin) {
         Course course = new Course();
         course.setCourseName(courseDto.getCourseName());
@@ -50,7 +50,7 @@ public class CourseService {
             throw new IllegalArgumentException("Course not found.");
         }
 
-        Employee employee = employeeRepository.findByUserId(employeeId);
+        Employee employee = employeeRepository.findById(employeeId).get();
         if(employee == null){
             throw new IllegalArgumentException("Employee not found.");
         }
@@ -145,5 +145,53 @@ public class CourseService {
 
     public Course findCourseByCourseId(Integer courseId) {
         return courseRepository.findByCourseId(courseId);
+    }
+
+    public List<Employee> getAvailableEmployees(int courseId) {
+        List<Employee> enrolledEmployees = courseAssignmentRepository.findByCourseCourseId(courseId)
+                .stream()
+                .map(CourseAssignment::getEmployee)
+                .toList();
+
+        // Fetch all employees
+        List<Employee> allEmployees = employeeRepository.findAll();
+
+        // Exclude enrolled employees
+        List<Employee> availableEmployees = allEmployees.stream()
+                .filter(emp -> !enrolledEmployees.contains(emp))
+                .toList();
+        return availableEmployees;
+    }
+
+    public void addAssignmentRequest(Integer selectedCourse, List<Integer> employeeIds, Integer managerId) {
+        try {
+            AssignmentRequest assignmentRequest = new AssignmentRequest();
+            assignmentRequest.setCourseId(selectedCourse);
+            assignmentRequest.setEmployeeIds(employeeIds);
+            assignmentRequest.setStatus("PENDING");
+            assignmentRequest.setManagerId(managerId);
+            System.out.println(assignmentRequest.toString());
+            assignmentRequestRepository.save(assignmentRequest);
+        } catch (Exception e) {
+            // Log the exception or handle specific exceptions
+            e.printStackTrace();
+            throw new RuntimeException("Failed to add assignment request: " + e.getMessage());
+        }
+    }
+
+    public List<AssignmentRequest> getAllAssignmentRequests() {
+        return assignmentRequestRepository.findAll();
+    }
+
+    public AssignmentRequest findAssignmentRequest(Integer requestId) {
+        return assignmentRequestRepository.findById(requestId).get();
+    }
+
+    @Transactional
+    public void updateRequestStatus(Integer requestId) {
+        int rowsAffected = assignmentRequestRepository.updateAssignmentRequestStatus(requestId, "COMPLETED");
+        if (rowsAffected == 0) {
+            throw new RuntimeException("No rows affected. Assignment ID might be invalid.");
+        }
     }
 }

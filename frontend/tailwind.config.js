@@ -8,10 +8,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#16423C',
-        accent: '#6A9C89',
-        soft: '#C4DAD2',
-        light: '#E9EFEC',
+        lightBlue: '#E9EFEC',
+        accentBlue: '#6A9AB0',
+        darkBlue: '#001F3F',
+        mediumBlue: '#3A6D8C',
+        lightGray: '#F9FAFB',
     },
       keyframes: {
         'fade-in-down': {

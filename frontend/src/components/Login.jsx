@@ -100,9 +100,9 @@ const Login = ({ handleLogin }) => {
             </button>
             <p className="text-center text-sm mt-4">
               Don't have an account?{" "}
-              <Link to="/signup" className="text-[#001F3F] font-semibold">
-                Signup
-              </Link>
+             
+              <Link to="/signup" className="text-[#001F3F] font-semibold underline hover:text-blue-500">Signup</Link>
+
             </p>
           </form>
         </div>

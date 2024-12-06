@@ -25,4 +25,6 @@ public interface CourseAssignmentRepository extends JpaRepository<CourseAssignme
 
     @Query("SELECT ca.employee FROM CourseAssignment ca WHERE ca.assignmentId = :assignmentId")
     Employee findEmployeeByAssignmentId(@Param("assignmentId") Integer assignmentId);
+
+    List<CourseAssignment> findByCourseCourseId(int courseId);
 }
