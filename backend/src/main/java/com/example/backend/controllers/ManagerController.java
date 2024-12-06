@@ -74,6 +74,16 @@ public class ManagerController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: "+ e.getMessage());
         }
     }
+    @GetMapping("{managerId}/employees/allManaged")
+    @PreAuthorize("hasRole('Manager')")
+    public ResponseEntity<?> getAllManagedEmployees(@PathVariable Integer managerId){
+        try{
+            List<UserDto> employees = employeeService.getAllManagedEmployeeUsers(managerId);
+            return  ResponseEntity.status(HttpStatus.OK).body(employees);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: "+ e.getMessage());
+        }
+    }
 
     @GetMapping("/{managerId}/request/all")
     public ResponseEntity<?> getRequests(@PathVariable Integer managerId){
