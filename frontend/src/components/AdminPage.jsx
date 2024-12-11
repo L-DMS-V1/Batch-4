@@ -297,6 +297,7 @@ import {
   ChevronLeft,
   BarChart // Add the icon for "Employee Progress"
 } from "lucide-react";
+import toast from "react-hot-toast";
 
 const AdminPage = () => {
   const navigate = useNavigate();
@@ -398,7 +399,10 @@ const AdminPage = () => {
         {/* Logout Button */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => {
+              toast.success('Logged out successfully');
+              navigate("/")}
+            }
             className="w-full flex items-center justify-center 
                        bg-red-500 text-white py-2 rounded-lg 
                        hover:bg-red-600 transition-colors"

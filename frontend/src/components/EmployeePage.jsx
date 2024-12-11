@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useParams, useNavigate } from "react-router-dom";
 
 const EmployeePage = () => {
@@ -47,7 +48,7 @@ const EmployeePage = () => {
         setTotalOngoing(ongoing);
         setTotalCompleted(completed);
       } catch (error) {
-        console.error("Error fetching assignments:", error);
+        toast.error("Error fetching assignments:", error.message);
       }
     };
 
@@ -57,7 +58,8 @@ const EmployeePage = () => {
   const handleLogout = () => {
     // Clear authentication token or session if needed
     document.cookie = "authToken=; max-age=0"; // Clear the token
-    navigate("/login"); // Redirect to login page
+    toast.success("Logged out successfully.")
+    navigate("/"); // Redirect to login page
   };
 
   const handleStartCourse = async (assignment) => {
@@ -76,20 +78,20 @@ const EmployeePage = () => {
         );
 
         if (response.ok) {
-          alert("Course started successfully!");
+          toast.success("Course started successfully!");
           navigate(`/${employeeId}/assignment/${assignmentId}`);
         } else {
           const errorData = await response.json();
-          alert(`Failed to start course: ${errorData.message}`);
+          toast.error(`Failed to start course: ${errorData.message}`);
         }
-      } else if (assignment.status === "ONGOING") {
+      } else if (assignment.status === "ONGOING" || assignment.status === "CLOSED") {
         navigate(`/${employeeId}/assignment/${assignmentId}`);
       } else if (assignment.status === "COMPLETED") {
         navigate(`/${employeeId}/feedback/${assignmentId}`);
       }
     } catch (error) {
       console.error("Error starting the course:", error);
-      alert("Error starting the course.");
+      toast.error("Error starting the course.");
     }
   };
 
@@ -222,7 +224,7 @@ const EmployeePage = () => {
                         ? "bg-darkBlue hover:bg-mediumBlue"
                         : "bg-accentBlue hover:bg-darkBlue"
                     }`}
-                    disabled={assignment.status === "CLOSED"} // Disable button for completed courses
+                    // disabled={assignment.status === "CLOSED"} // Disable button for completed courses
                   >
                     {assignment.status === "ONGOING"
                       ? "Continue"

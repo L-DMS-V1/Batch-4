@@ -558,6 +558,7 @@
 
 // export default Signup;
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
@@ -597,16 +598,16 @@ const Signup = () => {
             }))
           );
         } else {
-          console.error("Failed to fetch managers");
+          toast.error("Failed to fetch managers");
         }
       } catch (error) {
         console.error("Error fetching managers:", error);
+        toast.error("Error fetching managers:", error.message)
       }
     };
 
     if (role === "employee") {
       fetchManagers();
-      console.log(managers);
     }
   }, [role]);
 
@@ -693,12 +694,12 @@ const Signup = () => {
       }
 
       if (response.ok) {
-        setSuccess("Account created successfully! Redirecting to the admin page...");
+        setSuccess("Account created successfully!");
         setError("");
 
         setTimeout(() => {
           navigate("/admin");
-        }, 2000); 
+        }, 0); 
       } else {
         setError(responseData.message || "Failed to create account.");
       }
@@ -841,8 +842,8 @@ const Signup = () => {
         >
           Create Account
         </button>
-        {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
-        {success && <p className="text-green-500 mt-4 text-center">{success}</p>}
+        {error && <p className="text-red-500 mt-4 text-center">{error}</p> && toast.error(error)}
+        {success && <p className="text-green-500 mt-4 text-center">{success}</p> && toast.success(success)}
       </form>
     </div>
   );

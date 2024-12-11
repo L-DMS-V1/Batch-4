@@ -201,6 +201,7 @@
 //   );
 // }
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
 
@@ -236,7 +237,7 @@ export default function CreateRequestPage() {
           data.map((emp) => ({ value: emp.userId, label: emp.username }))
         );
       } catch (error) {
-        console.error("Error fetching employees:", error);
+        toast.error("Error fetching employees:", error.message);
       }
     };
     fetchEmployees();
@@ -270,11 +271,13 @@ export default function CreateRequestPage() {
       if (!response.ok) {
         const errorData = await response.json();
         setErrors({ message: errorData });
+        toast.error(errorData)
       } else {
+        toast.success("Request created successfully.")
         navigate(`/training-requests/${managerId}`);
       }
     } catch (error) {
-      console.error("Error submitting request:", error);
+      toast.error("Error submitting request:", error.message);
       setErrors({ message: "Error submitting request. Please try again." });
     }
   };

@@ -144,6 +144,7 @@
 //   );
 // }
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function ActiveCourses() {
@@ -171,7 +172,7 @@ export default function ActiveCourses() {
         const data = await response.json();
         setCourses(data);
       } catch (error) {
-        console.error("Error fetching courses:", error);
+        toast.error("Error fetching courses:", error);
       }
     };
 
@@ -192,7 +193,7 @@ export default function ActiveCourses() {
       const data = await response.json();
       setAvailableEmployees(data);
     } catch (error) {
-      console.error("Error fetching available employees:", error);
+      toast.error("Error fetching available employees:", error);
     }
   };
 
@@ -211,16 +212,16 @@ export default function ActiveCourses() {
       );
 
       if (response.ok) {
-        alert("Employees assignment request created successfully!");
+        toast.success("Employees assignment request created successfully!");
         setSelectedEmployees([]);
         setAvailableEmployees([]);
         setSelectedCourse(null);
         navigate(`/training-requests/${managerId}`);
       } else {
-        console.error("Error assigning employees:", await response.text());
+        toast.error("Error assigning employees:", await response.text());
       }
     } catch (error) {
-      console.error("Error assigning employees:", error);
+      toast.error("Error assigning employees:", error);
     }
   };
 

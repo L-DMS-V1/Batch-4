@@ -1,8 +1,6 @@
-
-
-
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster, toast } from 'react-hot-toast';
 import Home from './components/Home';
 import Login from './components/Login';
 import Signup from './components/Signup';
@@ -36,12 +34,14 @@ function App() {
         const loggedInUser = { username, role };
         setUser(loggedInUser);
         localStorage.setItem('user', JSON.stringify(loggedInUser)); // Store user in localStorage
+        toast.success(`Welcome, ${username}!`);
     };
 
     // Step 3: Handle logout logic and remove user from localStorage
     const handleLogout = () => {
         setUser(null);
         localStorage.removeItem('user'); // Remove user from localStorage on logout
+        toast.success('You have successfully logged out.');
     };
 
     // Redirect logic based on role
@@ -59,7 +59,9 @@ function App() {
 
     return (
         <Router>
+            <Toaster position="top-center" />
             <Routes>
+
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login handleLogin={handleLogin} />} />
                 <Route path="/signup" element={<Signup />} />

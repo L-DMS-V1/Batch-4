@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import toast from "react-hot-toast";
 
 export default function AssignmentPage() {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ export default function AssignmentPage() {
         setCourse(data.course);
         setProgress(data.progress);
       } catch (error) {
-        console.error("Error fetching assignment details:", error);
+        toast.error("Error fetching assignment details:", error);
       }
     };
     if (authToken) {
@@ -69,7 +70,7 @@ export default function AssignmentPage() {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to mark module as completed");
       }
-      alert(`Module ${moduleIndex + 1} marked as completed!`);
+      toast.success(`Module ${moduleIndex + 1} marked as completed!`);
       const updatedCompletedModules = progress.completedModules
         .split("")
         .map((bit, index) => (index === moduleIndex ? "1" : bit))
@@ -80,7 +81,7 @@ export default function AssignmentPage() {
       }));
     } catch (error) {
       console.error("Error marking module as completed:", error);
-      alert(`Failed to mark module as completed. ${error.message}`);
+      toast.error(`Failed to mark module as completed. ${error.message}`);
     } finally {
       setLoadingModules((prev) => ({ ...prev, [moduleIndex]: false }));
     }

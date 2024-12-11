@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function CourseCreatePage() {
   const { adminId } = useParams();
@@ -92,14 +93,16 @@ export default function CourseCreatePage() {
       if (!response.ok) {
         const errorData = await response.json();
         setErrors({ message: errorData });
+        toast.error(errorData)
       } else {
         const data = await response.json();
         course = data.course;
         const displayMessage = data.message;
-        console.log(response);
+        toast.success(data.message)
+        
       }
     } catch (error) {
-      console.error("Error creating course:", error);
+      toast.error("Error creating course:", error.message);
       setErrors({ message: "Error submitting request. Please try again." });
     }
 
@@ -124,13 +127,14 @@ export default function CourseCreatePage() {
       if (!response.ok) {
         const errorData = await response.json();
         setErrors({ message: errorData });
+        toast.error(errorData)
       } else {
         const data = await response.json();
-        alert("course created and assigned");
+        toast.success("course created and assigned");
         navigate(`/admin-dashboard/${adminId}`);
       }
     } catch (error) {
-      console.error("Error assigning course:", error);
+      toast.error("Error assigning course:", error);
       setErrors({ message: "Error assigning course. Please try again." });
     }
   };
