@@ -51,7 +51,7 @@ const FeedbackViewingPage = () => {
             {/* Back Arrow Button */}
             <button
               onClick={() => navigate(-1)}
-              className="absolute left-6 top-6 bg-accentBlue text-white p-3 rounded-full hover:bg-mediumBlue transition-colors"
+              className="absolute left-6 top-6 bg-darkBlue text-white p-3 rounded-full hover:bg-mediumBlue transition-colors"
             >
               <ArrowLeftIcon size={28} />
             </button>
@@ -77,7 +77,7 @@ const FeedbackViewingPage = () => {
                   </p>
                   <button
                     onClick={() => handleViewFeedback(course.courseId)}
-                    className="bg-accentBlue text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-mediumBlue transition-colors"
+                    className="bg-darkBlue text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-mediumBlue transition-colors"
                   >
                     View Feedback
                   </button>
