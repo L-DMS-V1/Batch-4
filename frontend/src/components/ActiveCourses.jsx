@@ -181,7 +181,7 @@ export default function ActiveCourses() {
   const fetchAvailableEmployees = async (courseId) => {
     try {
       const response = await fetch(
-        `http://localhost:9004/api/manager/course/${courseId}/available-employees`,
+        `http://localhost:9004/api/manager/${managerId}/course/${courseId}/available-employees`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
