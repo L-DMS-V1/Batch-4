@@ -118,7 +118,7 @@ const Requests = () => {
             {/* Back Arrow Button */}
             <button
               onClick={() => navigate(-1)}
-              className="absolute left-6 top-6 bg-accentBlue text-white p-3 rounded-full hover:bg-mediumBlue transition-colors"
+              className="absolute left-6 top-6 bg-darkBlue text-white p-3 rounded-full hover:bg-mediumBlue transition-colors"
             >
               <ArrowLeftIcon size={28} />
             </button>
@@ -136,7 +136,7 @@ const Requests = () => {
                   onClick={() => setSelectedTab("pending")}
                   className={`px-8 py-3 rounded-lg transition-all text-xl font-semibold ${
                     selectedTab === "pending"
-                      ? "bg-accentBlue text-white"
+                      ? "bg-darkBlue text-white"
                       : "text-darkBlue hover:bg-lightBlue"
                   }`}
                 >
@@ -146,7 +146,7 @@ const Requests = () => {
                   onClick={() => setSelectedTab("completed")}
                   className={`px-8 py-3 rounded-lg transition-all text-xl font-semibold ${
                     selectedTab === "completed"
-                      ? "bg-accentBlue text-white"
+                      ? "bg-darkBlue text-white"
                       : "text-darkBlue hover:bg-lightBlue"
                   }`}
                 >
