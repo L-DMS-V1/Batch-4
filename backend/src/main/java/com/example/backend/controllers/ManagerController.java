@@ -95,10 +95,10 @@ public class ManagerController {
         }
     }
 
-    @GetMapping("/course/{courseId}/available-employees")
+    @GetMapping("{managerId}/course/{courseId}/available-employees")
     @PreAuthorize("hasRole('Manager')")
-    public List<Employee> getAvailableEmployees(@PathVariable int courseId) {
-        return courseService.getAvailableEmployees(courseId);
+    public List<Employee> getAvailableEmployees(@PathVariable int managerId, @PathVariable int courseId) {
+        return courseService.getAvailableEmployees(managerId, courseId);
     }
 
     @PostMapping("/course/{selectedCourse}/assign")

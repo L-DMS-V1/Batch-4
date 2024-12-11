@@ -147,7 +147,7 @@ public class CourseService {
         return courseRepository.findByCourseId(courseId);
     }
 
-    public List<Employee> getAvailableEmployees(int courseId) {
+    public List<Employee> getAvailableEmployees(int managerId, int courseId) {
         List<Employee> enrolledEmployees = courseAssignmentRepository.findByCourseCourseId(courseId)
                 .stream()
                 .map(CourseAssignment::getEmployee)
@@ -158,6 +158,7 @@ public class CourseService {
 
         // Exclude enrolled employees
         List<Employee> availableEmployees = allEmployees.stream()
+                .filter(employee -> employee.getManager().getManagerId()==managerId)
                 .filter(emp -> !enrolledEmployees.contains(emp))
                 .toList();
         return availableEmployees;
