@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftIcon } from "lucide-react";
+import toast from "react-hot-toast";
 
 const FeedbackViewingPage = () => {
   const [courses, setCourses] = useState([]);
@@ -29,10 +30,10 @@ const FeedbackViewingPage = () => {
           const data = await response.json();
           setCourses(data);
         } else {
-          console.error("Failed to fetch courses");
+          toast.error("Failed to fetch courses");
         }
       } catch (error) {
-        console.error("Error fetching courses:", error);
+        toast.error("Error fetching courses:", error);
       }
     };
 

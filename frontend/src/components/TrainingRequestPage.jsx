@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function TrainingRequestPage() {
@@ -29,7 +30,6 @@ export default function TrainingRequestPage() {
           }
         );
         const data = await response.json();
-        console.log("Fetched Requests:", data);
         setRequests(data);
         data.forEach((request) => {
           if (request["status"] === "PENDING") {
@@ -39,7 +39,7 @@ export default function TrainingRequestPage() {
           }
         });
       } catch (error) {
-        console.error("Error fetching requests:", error);
+        toast.error("Error fetching requests:", error.message);
       }
     };
 
@@ -57,6 +57,7 @@ export default function TrainingRequestPage() {
   // Handle logout function
   const handleLogout = () => {
     document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"; // Remove the auth token
+    toast.success("Logged out successfully.")
     navigate("/"); // Redirect to the login page
   };
 

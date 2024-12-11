@@ -196,6 +196,7 @@
 //   );
 // }
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function AssignmentRequests() {
   const [assignmentRequests, setAssignmentRequests] = useState([]);
@@ -230,7 +231,7 @@ export default function AssignmentRequests() {
         const pendingRequests = data.filter((item) => item.status === "PENDING");
         setAssignmentRequests(pendingRequests);
       } catch (error) {
-        console.error("Error fetching assignment requests:", error);
+        toast.error("Error fetching assignment requests:", error.message);
         setMessage("Failed to fetch assignment requests. Please try again.");
       }
     };
@@ -278,6 +279,7 @@ export default function AssignmentRequests() {
       setMessage(
         `Successfully created assignments for requests`
       );
+      toast.success("Successfully created assignments for requests")
 
       // Remove successfully processed requests
       setAssignmentRequests((prev) =>
@@ -287,7 +289,7 @@ export default function AssignmentRequests() {
       );
       setSelectedRequests([]);
     } catch (error) {
-      console.error("Error creating course assignments:", error);
+      toast.error("Error creating course assignments:", error.message);
       setMessage("Failed to create course assignments. Please try again.");
     } finally {
       setLoading(false);

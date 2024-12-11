@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Pie } from "react-chartjs-2";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid"; // Importing the arrow icon
 import "chart.js/auto";
+import toast from "react-hot-toast";
 
 export default function CourseFeedbackPage() {
   const { courseId } = useParams();
@@ -47,10 +48,10 @@ export default function CourseFeedbackPage() {
           }, {});
           setRatingDistribution(distribution);
         } else {
-          console.error("Failed to fetch feedbacks");
+          toast.error("Failed to fetch feedbacks");
         }
       } catch (error) {
-        console.error("Error fetching feedbacks:", error);
+        toast.error("Error fetching feedbacks:", error.message);
       }
     };
 

@@ -54,6 +54,7 @@ export default function FeedbackPage() {
         navigate(-1); // Navigate back to the previous page
       }, 1000);
     } catch (error) {
+      toast.error(error.message ||  "Failed to submit feedback. Please try again later.")
       setMessage(error.message || "Failed to submit feedback. Please try again later.");
     } finally {
       setIsLoading(false); // Hide loading indicator

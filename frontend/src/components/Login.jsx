@@ -28,7 +28,6 @@ const Login = ({ handleLogin }) => {
         Cookies.set("authToken", token, { expires: 1 });
 
         handleLogin(username, role);
-        console.log("hi" + role);
         if (role == "Manager") {
           navigate(`/training-requests/${id}`); // Redirect to manager's page
         } else if (role == "Employee") {

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { CheckCircleIcon, ClockIcon, ArrowLeftIcon } from "lucide-react";
+import toast from "react-hot-toast";
 
 const Requests = () => {
   const { adminId } = useParams();
@@ -43,6 +44,7 @@ const Requests = () => {
         setPendingRequests(pending);
         setCompletedRequests(completed);
       } catch (error) {
+        toast.error("Error fetching requests.");
         console.error("Error fetching requests:", error);
       }
     };

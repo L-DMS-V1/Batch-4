@@ -281,7 +281,7 @@ const EmployeeProgress = () => {
         const data = await res.json();
         setProgressData(data);
       } catch (error) {
-        console.error("Error fetching progress data:", error);
+        toast.error("Error fetching progress data:", error);
       }
     };
 
