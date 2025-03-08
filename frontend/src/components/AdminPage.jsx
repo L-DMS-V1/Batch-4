@@ -11,6 +11,9 @@ const AdminPage = () => {
   const handleClick = () => {
     navigate(`/feedbacks/all`);
   };
+  const handleProgressNavigate=()=>{
+    navigate(`/progress`)
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-50 to-purple-50 p-8 flex flex-col items-center justify-center">
@@ -35,6 +38,12 @@ const AdminPage = () => {
             className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out hover:bg-yellow-700"
           >
             Go to Feedbacks
+          </button>
+          <button
+            onClick={handleProgressNavigate}
+            className="bg-gradient-to-r from-blue-400 to-blue-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out hover:bg-blue-700"
+          >
+            Go to Progress
           </button>
         </div>
       </div>
