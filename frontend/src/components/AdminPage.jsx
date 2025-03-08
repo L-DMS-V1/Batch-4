@@ -340,6 +340,9 @@ const AdminPage = () => {
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
+  const handleProgressNavigate=()=>{
+    navigate(`/progress`)
+  }
 
   return (
     <div className="flex min-h-screen bg-lightBlue">
@@ -411,6 +414,12 @@ const AdminPage = () => {
             <span className={`${isSidebarCollapsed ? 'hidden' : 'block'}`}>
               Logout
             </span>
+          </button>
+          <button
+            onClick={handleProgressNavigate}
+            className="bg-gradient-to-r from-blue-400 to-blue-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out hover:bg-blue-700"
+          >
+            Go to Progress
           </button>
         </div>
       </aside>
