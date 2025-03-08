@@ -1,9 +1,10 @@
+
 import React, { useEffect, useState } from "react";
-import { useParams, Navigate, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { useParams, useNavigate } from "react-router-dom";
 
 const EmployeePage = () => {
   const navigate = useNavigate();
-
   const { employeeId } = useParams(); // Extract employeeId from the route
   const [totalAssigned, setTotalAssigned] = useState([]);
   const [totalOngoing, setTotalOngoing] = useState(0);
@@ -34,11 +35,8 @@ const EmployeePage = () => {
           throw new Error("Failed to fetch assignments");
         }
         const data = await response.json();
-        console.log("Fetched Assignments:", data);
-
         setTotalAssigned(data); // Update the state with all assignments
 
-        // Calculate counts for ongoing and completed
         const ongoing = data.filter(
           (assignment) => assignment.status === "ONGOING"
         ).length;
@@ -50,18 +48,24 @@ const EmployeePage = () => {
         setTotalOngoing(ongoing);
         setTotalCompleted(completed);
       } catch (error) {
-        console.error("Error fetching assignments:", error);
+        toast.error("Error fetching assignments:", error.message);
       }
     };
 
     if (employeeId) fetchAssignment();
-  }, [employeeId, authToken]); // Remove unnecessary dependencies
-  // Remove totalAssigned from dependencies
+  }, [employeeId, authToken]);
+
+  const handleLogout = () => {
+    // Clear authentication token or session if needed
+    document.cookie = "authToken=; max-age=0"; // Clear the token
+    toast.success("Logged out successfully.")
+    navigate("/"); // Redirect to login page
+  };
 
   const handleStartCourse = async (assignment) => {
     try {
       const assignmentId = assignment.assignmentId;
-      if (assignment.status == "ASSIGNED") {
+      if (assignment.status === "ASSIGNED") {
         const response = await fetch(
           `http://localhost:9004/api/employee/${employeeId}/assignments/${assignmentId}/start`,
           {
@@ -74,30 +78,20 @@ const EmployeePage = () => {
         );
 
         if (response.ok) {
-          alert("Course started successfully!");
-          // Update the UI to reflect the course has been started
-          // setTotalAssigned(prev =>
-          //   prev.map(assignment =>
-          //     assignment.assignmentId === assignmentId
-          //       ? { ...assignment, status: 'ONGOING' }
-          //       : assignment
-          //   )
-          // );
-
+          toast.success("Course started successfully!");
           navigate(`/${employeeId}/assignment/${assignmentId}`);
         } else {
           const errorData = await response.json();
-          alert(`Failed to start course: ${errorData.message}`);
+          toast.error(`Failed to start course: ${errorData.message}`);
         }
-      } else if (assignment.status === "ONGOING") {
+      } else if (assignment.status === "ONGOING" || assignment.status === "CLOSED") {
         navigate(`/${employeeId}/assignment/${assignmentId}`);
       } else if (assignment.status === "COMPLETED") {
-        console.log("hii");
         navigate(`/${employeeId}/feedback/${assignmentId}`);
       }
     } catch (error) {
       console.error("Error starting the course:", error);
-      alert("Error starting the course.");
+      toast.error("Error starting the course.");
     }
   };
 
@@ -113,9 +107,7 @@ const EmployeePage = () => {
           darkMode ? "bg-gray-800" : "bg-[#001F3F]"
         } flex justify-between items-center px-8 py-6 shadow-xl text-white`}
       >
-        <h1 className="text-2xl font-extrabold tracking-widest text-gradient">
-          Learning Hub
-        </h1>
+        <h1 className="text-3xl font-bold">Learning Hub</h1>
         <div className="flex items-center space-x-4">
           <button
             onClick={toggleDarkMode}
@@ -123,23 +115,41 @@ const EmployeePage = () => {
           >
             {darkMode ? "🌞" : "🌙"}
           </button>
-          <h1 className="text-lg italic font-medium">Hey Employee</h1>
+          <p className="text-xl text-white italic">Hi Employee!</p>
+          <button
+            onClick={handleLogout}
+            className="bg-red-600 text-white py-2 px-4 rounded-full flex items-center space-x-2 hover:bg-red-700 transition duration-300 ease-in-out"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m10 0V7m0 9H7"
+              />
+            </svg>
+            <span>Logout</span>
+          </button>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="p-8">
-        <h2 className="text-4xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-[#667eea] to-[#764ba2] mb-12">
-          Employee Dashboard
-        </h2>
+        <section className="bg-lightBlue py-6 text-center">
+          <h2 className="text-4xl font-extrabold text-darkBlue">Employee Dashboard</h2>
+        </section>
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           <div className="p-8 bg-gradient-to-br from-[#6A9AB0] via-[#3A6D8C] to-[#001F3F] text-white rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 ease-in-out">
             <p className="text-lg font-semibold">Total Courses Assigned</p>
-            <span className="text-5xl font-bold mt-4">
-              {totalAssigned.length}
-            </span>
+            <span className="text-5xl font-bold mt-4">{totalAssigned.length}</span>
           </div>
           <div className="p-8 bg-gradient-to-br from-[#3A6D8C] via-[#6A9AB0] to-[#001F3F] text-white rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 ease-in-out">
             <p className="text-lg font-semibold">Total Courses Ongoing</p>
@@ -153,71 +163,81 @@ const EmployeePage = () => {
 
         {/* Assigned Courses Section */}
         <section className="space-y-8">
-          <h3 className="text-2xl font-bold text-gray-800 mb-6">
-            Assigned Courses
-          </h3>
-          {totalAssigned.map((assignment) => (
-            <div
-              key={assignment.assignmentId}
-              className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transform hover:translate-y-1 transition-all duration-300 ease-in-out border-l-4 border-blue-600"
-            >
-              <div className="flex justify-between items-center">
-                <p className="text-lg font-semibold text-gray-800">
-                  Assignment ID: {assignment.assignmentId}
-                </p>
-                <span
-                  className={`px-4 py-2 rounded-full text-white text-sm font-medium ${
+          <h3 className="text-2xl font-bold text-darkBlue mb-6">Assigned Courses</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {totalAssigned.map((assignment) => (
+              <div
+                key={assignment.assignmentId}
+                className="p-6 bg-lightBlue rounded-lg shadow-lg border-t-4 transition-all duration-300 hover:shadow-2xl hover:scale-105"
+                style={{
+                  borderColor:
                     assignment.status === "ONGOING"
-                      ? "bg-yellow-500"
+                      ? "#6A9AB0" // accentBlue
                       : assignment.status === "COMPLETED"
-                      ? "bg-green-500"
-                      : "bg-gray-500"
-                  }`}
-                >
-                  {assignment.status}
-                </span>
-              </div>
-              <p className="text-sm text-gray-600">
-                <strong>Deadline:</strong> {assignment.deadline}
-              </p>
-              <p className="text-sm text-gray-600">
-                <strong>Progress:</strong>{" "}
-                {assignment.courseProgress !== null
-                  ? `${(
-                      ((assignment.courseProgress.completedModules.split(1)
-                        .length -
-                        1) *
-                        100) /
-                      assignment.courseProgress.completedModules.split("")
-                        .length
-                    ).toFixed(0)}%`
-                  : "Not Started"}
-              </p>
+                      ? "#001F3F" // darkBlue
+                      : "#3A6D8C", // mediumBlue
+                }}
+              >
+                {/* Header */}
+                <div className="flex justify-between items-center mb-4">
+                  <p className="text-lg font-semibold text-darkBlue">
+                    Assignment ID: {assignment.assignmentId}
+                  </p>
+                  <span
+                    className={`px-3 py-1 rounded-full text-white text-sm font-medium ${
+                      assignment.status === "ONGOING"
+                        ? "bg-accentBlue"
+                        : assignment.status === "COMPLETED"
+                        ? "bg-darkBlue"
+                        : assignment.status === "CLOSED"
+                        ? "bg-black"
+                        : "bg-mediumBlue"
+                    }`}
+                  >
+                    {assignment.status}
+                  </span>
+                </div>
 
-              <div className="mt-6">
-                <button
-                  onClick={() => handleStartCourse(assignment)}
-                  className={`w-1/4 py-3 rounded-lg text-white font-semibold transition-all duration-300 ease-in-out ${
-                    assignment.status === "ONGOING"
-                      ? "bg-gray-500"
+                {/* Assignment Details */}
+                <p className="text-sm text-mediumBlue mb-2">
+                  <strong>Deadline:</strong> {assignment.deadline}
+                </p>
+                <p className="text-sm text-mediumBlue">
+                  <strong>Progress:</strong>{" "}
+                  {assignment.courseProgress
+                    ? `${(
+                        ((assignment.courseProgress.completedModules.split(1).length - 1) *
+                          100) /
+                        assignment.courseProgress.completedModules.split("").length
+                      ).toFixed(0)}%`
+                    : "Not Started"}
+                </p>
+
+                {/* Action Button */}
+                <div className="mt-4">
+                  <button
+                    onClick={() => handleStartCourse(assignment)}
+                    className={`w-full py-2 rounded-md text-white font-semibold transition-all duration-300 ${
+                      assignment.status === "ONGOING"
+                        ? "bg-mediumBlue hover:bg-accentBlue"
+                        : assignment.status === "COMPLETED"
+                        ? "bg-darkBlue hover:bg-mediumBlue"
+                        : "bg-accentBlue hover:bg-darkBlue"
+                    }`}
+                    // disabled={assignment.status === "CLOSED"} // Disable button for completed courses
+                  >
+                    {assignment.status === "ONGOING"
+                      ? "Continue"
                       : assignment.status === "COMPLETED"
-                      ? "bg-green-600 hover:bg-green-700"
-                      : assignment.status === "CLOSED"
-                      ? "bg-black"
-                      : "bg-blue-600 hover:bg-blue-700"
-                  }`}
-                >
-                  {assignment.status === "ONGOING"
-                    ? "Continue"
-                    : assignment.status === "COMPLETED"
-                    ? "Submit Feedback"
-                    : assignment.status === "CLOSED"
-                    ? "CLOSED"
-                    : "Start Course"}
-                </button>
+                      ? "Submit Feedback"
+                      :assignment.status === "CLOSED"
+                      ? "Closed" // Show 'Completed' when course is finished
+                      : "Start"}
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </section>
       </main>
     </div>

@@ -1,6 +1,7 @@
 package com.example.backend.services;
 
 //import com.example.backend.Config.JwtConfig;
+import com.example.backend.DTOs.EmployeeRegistrationDto;
 import com.example.backend.DTOs.UserRegistrationDTO;
 import com.example.backend.models.Admin;
 import com.example.backend.models.Employee;
@@ -22,6 +23,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class UserService {
     @Autowired
@@ -39,56 +42,85 @@ public class UserService {
     private ManagerRepository managerRepository;
     @Autowired
     private EmployeeRepository employeeRepository;
-    
-//        private JwtConfig jwtConfig;
-    
-        public ResponseEntity<?> registerUser(UserRegistrationDTO userRegistrationDTO) {
-            Role role = roleRepository.findByRoleName(userRegistrationDTO.getRole());
-            if (role == null) {
-                throw new IllegalArgumentException("Role not found: " + userRegistrationDTO.getRole());
-            }
-    
-            if (userRepository.existsByUsername(userRegistrationDTO.getUsername())) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username already exists.");
-            }
-    
-            User user = new User();
-            user.setUsername(userRegistrationDTO.getUsername());
-            user.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
-            user.setEmail(userRegistrationDTO.getEmail());
-            user.setRole(role);
-    
-            User savedUser = userRepository.save(user);
-    
-            switch (role.getRoleName()) {
-                case "Admin":
-                    Admin admin = new Admin();
-                    admin.setUser(savedUser);
-                    adminRepository.save(admin);
-                    break;
-    
-                case "Manager":
-                    Manager manager = new Manager();
-                    manager.setUser(savedUser);
-                    managerRepository.save(manager);
-                    break;
-    
-                case "Employee":
-                    Employee employee = new Employee();
-                    employee.setUser(savedUser);
-                    employeeRepository.save(employee);
-                    break;
-    
-                default:
-                    throw new IllegalArgumentException("Invalid role: " + role.getRoleName());
-            }
-    
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+
+
+    public ResponseEntity<?> registerUser(UserRegistrationDTO userRegistrationDTO) {
+        Role role = roleRepository.findByRoleName(userRegistrationDTO.getRole());
+        if (role == null) {
+            throw new IllegalArgumentException("Role not found: " + userRegistrationDTO.getRole());
         }
-    
-        public User findByUsername(String username) {
-            return userRepository.findByUsername(username);
+
+        if (userRepository.existsByUsername(userRegistrationDTO.getUsername())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username already exists.");
         }
+
+        User user = new User();
+        user.setUsername(userRegistrationDTO.getUsername());
+        user.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
+        user.setEmail(userRegistrationDTO.getEmail());
+        user.setRole(role);
+
+        User savedUser = userRepository.save(user);
+
+        switch (role.getRoleName()) {
+            case "Admin":
+                Admin admin = new Admin();
+                admin.setUser(savedUser);
+                adminRepository.save(admin);
+                break;
+
+            case "Manager":
+                Manager manager = new Manager();
+                manager.setUser(savedUser);
+                managerRepository.save(manager);
+                break;
+
+            case "Employee":
+                Employee employee = new Employee();
+                employee.setUser(savedUser);
+                employeeRepository.save(employee);
+                break;
+
+            default:
+                throw new IllegalArgumentException("Invalid role: " + role.getRoleName());
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+    }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public ResponseEntity<?> registerEmployee(EmployeeRegistrationDto userRegistrationDTO) {
+        Role role = roleRepository.findByRoleName(userRegistrationDTO.getRole());
+        if (role == null) {
+            throw new IllegalArgumentException("Role not found: " + userRegistrationDTO.getRole());
+        }
+
+        if (userRepository.existsByUsername(userRegistrationDTO.getUsername())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username already exists.");
+        }
+
+        User user = new User();
+        user.setUsername(userRegistrationDTO.getUsername());
+        user.setPassword(passwordEncoder.encode(userRegistrationDTO.getPassword()));
+        user.setEmail(userRegistrationDTO.getEmail());
+        user.setRole(role);
+
+        User savedUser = userRepository.save(user);
+
+        if(Objects.equals(role.getRoleName(), "Employee")) {
+            Employee employee = new Employee();
+            employee.setUser(savedUser);
+            employee.setManager(managerRepository.findByManagerId(userRegistrationDTO.getManagerId()));
+            employeeRepository.save(employee);
+        }else{
+            throw new IllegalArgumentException("Invalid role: " + role.getRoleName());
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+    }
 //
 //        @Autowired
 //        public UserService(JwtConfig jwtConfig) {

@@ -1,4 +1,5 @@
 import React from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
@@ -8,9 +9,7 @@ const Home = () => {
     navigate("/login");
   };
 
-  const handleSignupClick = () => {
-    navigate("/signup");
-  };
+ 
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -37,13 +36,7 @@ const Home = () => {
             onClick={handleLoginClick}
           >
             Login
-          </button>
-          <button
-            className="bg-[#3A6D8C] text-white font-semibold px-6 py-2 rounded-full shadow-md hover:bg-[#001F3F] transition duration-300 transform hover:scale-105"
-            onClick={handleSignupClick}
-          >
-            Signup
-          </button>
+          </button>        
         </div>
       </div>
       {/* Background Image with Dark Overlay and Side-Aligned Text */}
@@ -196,74 +189,73 @@ const Home = () => {
       {/* Break between sections */}
       <div className="my-10"></div>{" "}
       {/* This creates space between the two sections */}
-      <section className="py-10 px-8 bg-white">
-        <h2 className="text-3xl font-bold text-[#001F3F] text-center mb-6">
-          Contact Us
-        </h2>
+      <section className="py-12 px-8">
+  <h2 className="text-4xl font-extrabold text-[#001F3F] text-center mb-8">Contact Us</h2>
 
-        <div className="text-center mb-8">
-          <p className="text-lg text-gray-700 mb-2">
-            Have questions or need assistance? Reach out to us!
-          </p>
-          <p className="text-lg text-gray-700 mb-2">
-            Email: support@example.com
-          </p>
-          <p className="text-lg text-gray-700 mb-2">Phone: (123) 456-7890</p>
-        </div>
+  <div className="text-center mb-10">
+    <p className="text-lg text-gray-600 mb-2">
+      Have questions or need assistance? We’re here to help!
+    </p>
+    <p className="text-lg text-gray-600 mb-1 font-medium">
+      <span className="text-[#001F3F]">Email:</span> l&d@gmail.com
+    </p>
+    <p className="text-lg text-gray-600 font-medium">
+      <span className="text-[#001F3F]">Phone:</span> (649) 283-9802
+    </p>
+  </div>
 
-        <h3 className="text-2xl font-bold text-[#001F3F] text-center mb-4">
-          Follow Us
-        </h3>
-        <div className="flex justify-center space-x-6">
-          {/* Instagram Icon */}
-          <a
-            href="#"
-            aria-label="Instagram"
-            className="text-[#001F3F] hover:text-[#3A6D8C] transition duration-300"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-8 w-8"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 2.5C6.4 2.5 2 6.9 2 12.5c0 5.6 4.4 10 10 10s10-4.4 10-10c0-5.6-4.4-10-10-10zm4.1 16.4h-8.2c-.7 0-1.3-.6-1.3-1.3v-8.2c0-.7.6-1.3 1.3-1.3h8.2c.7 0 1.3.6 1.3 1.3v8.2c0 .7-.6 1.3-1.3 1.3zm-4.1-9.2a2.7 2.7 0 100 5.5 2.7 2.7 0 000-5.5zm0 4.1a1.4 1.4 0 110-2.8 1.4 1.4 0 010 2.8zm5.8-5.5a.5.5 0 01-.5.5h-1a.5.5 0 01-.5-.5V5a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v1.4z" />
-            </svg>
-          </a>
+  <h3 className="text-3xl font-bold text-[#001F3F] text-center mb-6">Follow Us</h3>
+  <div className="flex justify-center space-x-8">
+    {/* Instagram Icon */}
+    <a
+      href="#"
+      aria-label="Instagram"
+      className="text-[#001F3F] hover:text-[#3A6D8C] transition duration-300"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-10 w-10 hover:scale-110 transition-transform duration-300"
+        fill="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.206.056 2.046.247 2.515.414a4.92 4.92 0 011.768 1.143 4.92 4.92 0 011.143 1.768c.167.469.358 1.309.414 2.515.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.056 1.206-.247 2.046-.414 2.515a4.92 4.92 0 01-1.143 1.768 4.92 4.92 0 01-1.768 1.143c-.469.167-1.309.358-2.515.414-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.206-.056-2.046-.247-2.515-.414a4.92 4.92 0 01-1.768-1.143 4.92 4.92 0 01-1.143-1.768c-.167-.469-.358-1.309-.414-2.515C2.175 15.747 2.163 15.367 2.163 12s.012-3.584.07-4.85c.056-1.206.247-2.046.414-2.515a4.92 4.92 0 011.143-1.768A4.92 4.92 0 015.488 2.58c.469-.167 1.309-.358 2.515-.414C8.416 2.175 8.796 2.163 12 2.163zm0 1.837c-3.197 0-3.567.012-4.818.07-1.026.05-1.679.225-2.078.38a3.194 3.194 0 00-1.165.759c-.331.331-.582.735-.759 1.165-.155.399-.33 1.052-.38 2.078-.058 1.25-.07 1.621-.07 4.818s.012 3.567.07 4.818c.05 1.026.225 1.679.38 2.078.177.43.428.834.759 1.165.331.331.735.582 1.165.759.399.155 1.052.33 2.078.38 1.25.058 1.621.07 4.818.07s3.567-.012 4.818-.07c1.026-.05 1.679-.225 2.078-.38a3.194 3.194 0 001.165-.759c.331-.331.582-.735.759-1.165.155-.399.33-1.052.38-2.078.058-1.25.07-1.621.07-4.818s-.012-3.567-.07-4.818c-.05-1.026-.225-1.679-.38-2.078a3.194 3.194 0 00-.759-1.165 3.194 3.194 0 00-1.165-.759c-.399-.155-1.052-.33-2.078-.38-1.25-.058-1.621-.07-4.818-.07zM12 7.398a4.602 4.602 0 110 9.204 4.602 4.602 0 010-9.204zm0 1.837a2.765 2.765 0 100 5.531 2.765 2.765 0 000-5.531zm5.354-2.151a1.078 1.078 0 110 2.156 1.078 1.078 0 010-2.156z" />
+      </svg>
+    </a>
 
-          {/* Facebook Icon */}
-          <a
-            href="#"
-            aria-label="Facebook"
-            className="text-[#001F3F] hover:text-[#3A6D8C] transition duration-300"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-8 w-8"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 2C6.5 2 2 6.5 2 12c0 5.5 4.5 10 10 10 5.5 0 10-4.5 10-10S17.5 2 12 2zm3 11h-2v6h-4v-6H9V10h4V8c0-1.5.8-3 3-3h2v4h-2c-.5 0-1 .5-1 1v2h3l-1 3z" />
-            </svg>
-          </a>
+    {/* Facebook Icon */}
+    <a
+      href="#"
+      aria-label="Facebook"
+      className="text-[#001F3F] hover:text-[#3A6D8C] transition duration-300"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-10 w-10 hover:scale-110 transition-transform duration-300"
+        fill="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879v-6.987H7.898v-2.892h2.54V9.413c0-2.507 1.492-3.89 3.777-3.89 1.096 0 2.238.196 2.238.196v2.463h-1.26c-1.242 0-1.627.772-1.627 1.562v1.875h2.773l-.443 2.892h-2.33v6.987C18.343 21.128 22 16.991 22 12z" />
+      </svg>
+    </a>
 
-          {/* LinkedIn Icon */}
-          <a
-            href="#"
-            aria-label="LinkedIn"
-            className="text-[#001F3F] hover:text-[#3A6D8C] transition duration-300"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-8 w-8"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M20.452 20.452h-3.54v-5.95c0-1.419-.03-3.246-1.974-3.246-1.974 0-2.278 1.541-2.278 3.132v6.064h-3.539V10.01h3.397v1.48h.047c.474-.895 1.633-1.84 3.354-1.84 3.593 0 4.253 2.359 4.253 5.413v5.391h-.001zm-16.122-12.87c-1.139 0-2.055.918-2.055 2.04 0 1.119.93 2.038 2.042 2.038h.027c1.139 0 2.06-.919 2.06-2.038-.003-1.122-.919-2.04-2.059-2.04h-.027zm1.749 12.87H3.282V10.01h3.699v10.472zM22 0H2C.897 0 0 .897 0 2v20c0 1.103.897 2 2 2h20c1.103 0 2-.897 2-2V2c0-1.103-.897-2-2-2z" />
-            </svg>
-          </a>
-        </div>
-      </section>
+    {/* LinkedIn Icon */}
+    <a
+      href="#"
+      aria-label="LinkedIn"
+      className="text-[#001F3F] hover:text-[#3A6D8C] transition duration-300"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-10 w-10 hover:scale-110 transition-transform duration-300"
+        fill="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path d="M20.452 20.452h-3.54v-5.95c0-1.419-.03-3.246-1.974-3.246-1.974 0-2.278 1.541-2.278 3.132v6.064h-3.539V10.01h3.397v1.48h.047c.474-.895 1.633-1.84 3.354-1.84 3.593 0 4.253 2.359 4.253 5.413v5.391h-.001zm-16.122-12.87c-1.139 0-2.055.918-2.055 2.04 0 1.119.93 2.038 2.042 2.038h.027c1.139 0 2.06-.919 2.06-2.038-.003-1.122-.919-2.04-2.059-2.04h-.027zm1.749 12.87H3.282V10.01h3.699v10.472zM22.224 0H1.771C.792 0 0 .784 0 1.754v20.491C0 23.216.792 24 1.771 24h20.451c.982 0 1.774-.784 1.774-1.754V1.754C24 .784 23.206 0 22.224 0z" />
+      </svg>
+    </a>
+  </div>
+</section>
+
     </div>
   );
 };

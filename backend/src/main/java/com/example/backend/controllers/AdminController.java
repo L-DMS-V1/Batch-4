@@ -1,9 +1,6 @@
 package com.example.backend.controllers;
 
-import com.example.backend.DTOs.CourseAssignmentDto;
-import com.example.backend.DTOs.CourseCreationResponse;
-import com.example.backend.DTOs.CourseDto;
-import com.example.backend.DTOs.ProgressDataDto;
+import com.example.backend.DTOs.*;
 import com.example.backend.models.*;
 import com.example.backend.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +10,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +33,10 @@ public class AdminController {
     private UserService userService;
     @Autowired
     private FeedbackService feedbackService;
+    @Autowired
+    private ManagerService managerService;
+    @Autowired
+    private EmployeeService employeeService;
 
     @GetMapping("/request/all")
     @PreAuthorize("hasRole('Admin')")
@@ -41,6 +44,42 @@ public class AdminController {
         try{
             List<RequestForm> requestForms = requestService.getAllRequests();
             return ResponseEntity.status(HttpStatus.OK).body(requestForms);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: " + e.getMessage());
+        }
+    }
+    @GetMapping("/managers/all")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<?> findAllManagers(){
+        try{
+            List<Manager> managers = managerService.getAllManagers();
+            return ResponseEntity.status(HttpStatus.OK).body(managers);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: " + e.getMessage());
+        }
+    }
+    @GetMapping("/assignmentRequests/all")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<?> findAllAssignmentRequestsMade(){
+        try{
+            List<AssignmentRequest> requestForms = courseService.getAllAssignmentRequests();
+            System.out.println(requestForms.toString());
+            List<AssignmentRequestResponseDto> res = new ArrayList<>();
+            for(AssignmentRequest request: requestForms){
+                AssignmentRequestResponseDto dto = new AssignmentRequestResponseDto();
+                dto.setCourse(courseService.findCourseByCourseId(request.getCourseId()));
+                dto.setStatus(request.getStatus());
+                dto.setManager(managerService.getManagerByManagerId(request.getManagerId()));
+                dto.setRequestId(request.getAssignmentRequestId());
+                List<Employee> emp = new ArrayList<>();
+                for(Integer employeeId : request.getEmployeeIds()){
+                    Employee e = employeeService.findEmployee(employeeId).get();
+                    emp.add(e);
+                }
+                dto.setEmployees(emp);
+                res.add(dto);
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(res);
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: " + e.getMessage());
         }
@@ -107,6 +146,41 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: "+ e.getMessage());
         }
     }
+
+    @PostMapping("/course-assignments/create")
+    @PreAuthorize("hasRole('Admin')")
+    public ResponseEntity<?> createNewAssignments(@RequestBody assignmentCreationRequestDto request){
+        List<Integer> requestIds = request.getRequestIds();
+        HashMap<Integer, Object> res = new HashMap<>();
+        for(Integer requestId: requestIds){
+            try{
+                AssignmentRequest assignment = courseService.findAssignmentRequest(requestId);
+                List<CourseAssignment> successfulAssignments = new ArrayList<>();
+                List<String> failedAssignments = new ArrayList<>();
+                Course course = courseService.findCourseByCourseId(assignment.getCourseId());
+                for (Integer employeeId : assignment.getEmployeeIds()) {
+                    try {
+                        int hours = Integer.parseInt(course.getDuration().split(" ")[0]);
+                        CourseAssignment courseAssignment = courseService.assignCourseToEmployee(assignment.getCourseId(), employeeId, LocalDate.now().plusDays(hours / 24).toString(), "ASSIGNED");
+                        successfulAssignments.add(courseAssignment);
+                    } catch (Exception e) {
+                        failedAssignments.add("Failed to assign course to employee ID " + employeeId + ": " + e.getMessage());
+                    }
+                }
+                courseService.updateRequestStatus(requestId);
+                Map<String, Object> response = new HashMap<>();
+                response.put("successfulAssignments", successfulAssignments);
+                response.put("failedAssignments", failedAssignments);
+                res.put(requestId, response);
+
+            }catch (Exception e){
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing: "+ e.getMessage());
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(res);
+    }
+
     @GetMapping("/progress/complete")
     @PreAuthorize("hasRole('Admin')")
     public ResponseEntity<?> getProgressData() {

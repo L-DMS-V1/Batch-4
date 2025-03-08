@@ -1,4 +1,6 @@
+
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function TrainingRequestPage() {
@@ -28,7 +30,6 @@ export default function TrainingRequestPage() {
           }
         );
         const data = await response.json();
-        console.log("Fetched Requests:", data); // Log the fetched data
         setRequests(data);
         data.forEach((request) => {
           if (request["status"] === "PENDING") {
@@ -38,7 +39,7 @@ export default function TrainingRequestPage() {
           }
         });
       } catch (error) {
-        console.error("Error fetching requests:", error);
+        toast.error("Error fetching requests:", error.message);
       }
     };
 
@@ -53,13 +54,46 @@ export default function TrainingRequestPage() {
     setSelectedRequest(null);
   };
 
+  // Handle logout function
+  const handleLogout = () => {
+    document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"; // Remove the auth token
+    toast.success("Logged out successfully.")
+    navigate("/"); // Redirect to the login page
+  };
+
   return (
     <div className="bg-[#E9EFEC] min-h-screen p-6">
       {/* Header */}
       <header className="bg-gradient-to-r from-[#001F3F] to-[#3A6D8C] text-white p-5 flex justify-between items-center shadow-lg rounded-lg">
-        <h1 className="text-2xl font-bold tracking-wide">Learning Hub</h1>
-        <span className="text-lg italic">Hey Manager!</span>
-      </header>
+  <h1 className="text-2xl font-bold tracking-wide">Learning Hub</h1>
+  
+  {/* "Hey Manager!" text and logout button */}
+  <div className="flex items-center space-x-4">
+    <span className="text-lg italic">Hey Manager!</span>
+    
+    <button
+      onClick={handleLogout}
+      className="bg-red-600 text-white py-2 px-4 rounded-full flex items-center space-x-2 hover:bg-red-700 transition duration-300 ease-in-out"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M17 16l4-4m0 0l-4-4m4 4H7m10 0V7m0 9H7"
+        />
+      </svg>
+      <span>Logout</span>
+    </button>
+  </div>
+</header>
+
 
       {/* Request Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
@@ -85,12 +119,18 @@ export default function TrainingRequestPage() {
       </div>
 
       {/* Create New Request Button */}
-      <div className="text-center my-8">
+      <div className="text-center my-8 flex justify-center gap-10">
         <button
           onClick={() => navigate(`/create-request/${managerId}`)}
           className="bg-[#3A6D8C] text-white text-lg font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-[#001F3F] transition-all duration-300 ease-in-out transform hover:scale-105"
         >
           Create New Request
+        </button>
+        <button
+          onClick={() => navigate(`/manager/${managerId}/all-courses`)}
+          className="bg-[#3A6D8C] text-white text-lg font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-[#001F3F] transition-all duration-300 ease-in-out transform hover:scale-105"
+        >
+          View All Courses
         </button>
       </div>
 
@@ -103,7 +143,6 @@ export default function TrainingRequestPage() {
             </th>
             <th className="px-6 py-4 text-left font-semibold">Duration</th>
             <th className="px-6 py-4 text-left font-semibold">Status</th>
-            {/* <th className="px-6 py-4 text-left font-semibold">Created Date</th> */}
             <th className="px-6 py-4 text-center font-semibold">Actions</th>
           </tr>
         </thead>
@@ -130,7 +169,6 @@ export default function TrainingRequestPage() {
                   {request.status}
                 </span>
               </td>
-              {/* <td className="border px-6 py-4 text-gray-700">{request.createdDate}</td> */}
               <td className="border px-6 py-4 text-center">
                 <button
                   onClick={() => viewDetails(request)}
@@ -151,18 +189,12 @@ export default function TrainingRequestPage() {
             <h2 className="text-2xl font-bold mb-6 text-[#001F3F]">
               Request Details
             </h2>
-            {/* <p><strong>Employee ID:</strong> {selectedRequest.employeeId}</p>
-            <p><strong>Employee Name:</strong> {selectedRequest.employeeName}</p> */}
             <p>
               <strong>Training Program:</strong> {selectedRequest.courseName}
             </p>
-            {/* <p><strong>Outcomes:</strong> {selectedRequest.outcomes}</p> */}
-            {/* <p><strong>Concepts:</strong> {selectedRequest.keyConcepts}</p> */}
             <p>
               <strong>Duration:</strong> {selectedRequest.duration}
             </p>
-            {/* <p><strong>Position:</strong> {selectedRequest.employeePosition}</p> */}
-            {/* <p><strong>Resource Links:</strong> {selectedRequest.resourceLinks}</p> */}
             <p>
               <strong>Employees :</strong>{" "}
               {selectedRequest.requiredEmployees

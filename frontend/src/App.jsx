@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster, toast } from 'react-hot-toast';
 import Home from './components/Home';
 import Login from './components/Login';
 import Signup from './components/Signup';
@@ -15,14 +16,35 @@ import EmployeeProgress from './components/EmployeeProgress';
 import FeedbackPage from './components/FeedbackPage';
 import CourseFeedbackPage from './components/CourseFeedbackPage';
 import FeedbackViewingPage from './components/FeedbackViewingPage';
+import AssignmentRequests from './components/AssignmentRequests';
 
 function App() {
     const [user, setUser] = useState(null);
 
+    // Step 1: Retrieve user from localStorage when app first loads
+    useEffect(() => {
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        if (storedUser) {
+            setUser(storedUser);
+        }
+    }, []); // Only run this effect once on initial render
+
+    // Step 2: Handle login logic and persist user in localStorage
     const handleLogin = (username, role) => {
-        setUser({ username, role });
+        const loggedInUser = { username, role };
+        setUser(loggedInUser);
+        localStorage.setItem('user', JSON.stringify(loggedInUser)); // Store user in localStorage
+        toast.success(`Welcome, ${username}!`);
     };
 
+    // Step 3: Handle logout logic and remove user from localStorage
+    const handleLogout = () => {
+        setUser(null);
+        localStorage.removeItem('user'); // Remove user from localStorage on logout
+        toast.success('You have successfully logged out.');
+    };
+
+    // Redirect logic based on role
     const roleRedirect = (role) => {
         if (role === 'Manager') return '/training-requests/:managerId';
         if (role === 'Employee') return '/employee-dashboard/:employeeId';
@@ -30,9 +52,16 @@ function App() {
         return '/';
     };
 
+    // Step 4: Ensure routes render correctly once the user state is loaded
+//     if (user === null) {
+//         return <div>Loading...</div>; // Optional: Show loading while the user state is being initialized
+//     }
+
     return (
         <Router>
+            <Toaster position="top-center" />
             <Routes>
+
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login handleLogin={handleLogin} />} />
                 <Route path="/signup" element={<Signup />} />
@@ -40,6 +69,10 @@ function App() {
                 <Route
                     path="/training-requests/:managerId"
                     element={user?.role === 'Manager' ? <TrainingRequestPage /> : <Navigate to="/" />}
+                />
+                <Route
+                    path="/manager/:managerId/all-courses"
+                    element={user?.role === 'Manager' ? <ActiveCourses /> : <Navigate to="/" />}
                 />
                 <Route
                     path="/employee-dashboard/:employeeId"
@@ -52,6 +85,10 @@ function App() {
                 <Route
                     path="/admin/:adminId/requests"
                     element={user?.role === 'Admin' ? <Requests /> : <Navigate to="/" />}
+                />
+                <Route
+                    path="/admin/:adminId/assignmentRequests"
+                    element={user?.role === 'Admin' ? <AssignmentRequests /> : <Navigate to="/" />}
                 />
                 <Route
                     path="/admin/:adminId/create-course"
@@ -74,5 +111,3 @@ function App() {
 }
 
 export default App;
-
-

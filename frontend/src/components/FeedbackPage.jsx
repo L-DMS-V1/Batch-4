@@ -1,24 +1,35 @@
+
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function FeedbackPage() {
   const navigate = useNavigate();
-  const { employeeId, assignmentId } = useParams();
+  const { assignmentId } = useParams();
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [comment, setComment] = useState("");
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // Loading state
   const authToken = document.cookie
     .split("; ")
     .find((row) => row.startsWith("authToken="))
     ?.split("=")[1];
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    // Validation: Ensure rating and comment are provided
+    if (rating === 0 || comment.trim() === "") {
+      setMessage("Please provide both a rating and a comment.");
+      return;
+    }
 
     const feedbackData = {
       rating,
       comment,
     };
+
+    setIsLoading(true); // Show loading indicator
 
     try {
       const response = await fetch(
@@ -27,41 +38,42 @@ export default function FeedbackPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${authToken}`, // Add authorization header
+            Authorization: `Bearer ${authToken}`,
           },
           body: JSON.stringify(feedbackData),
         }
       );
-      //   const data = await response.json();
-      console.log(response);
+
       if (!response.ok) {
-        console.log("byeee");
-        throw error(data);
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to submit feedback.");
       }
 
       setMessage("Feedback submitted successfully!");
-      //   setTimeout(()=>{}, 1000)
-      navigate(`/${employeeId}/assignment/${assignmentId}`);
-      console.log("what");
+      setTimeout(() => {
+        navigate(-1); // Navigate back to the previous page
+      }, 1000);
     } catch (error) {
-      setMessage("Failed to submit feedback. Please try again later.");
-      //   console.error(error);
+      toast.error(error.message ||  "Failed to submit feedback. Please try again later.")
+      setMessage(error.message || "Failed to submit feedback. Please try again later.");
+    } finally {
+      setIsLoading(false); // Hide loading indicator
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-green-50 to-teal-50 p-8 flex flex-col items-center">
-      <div className="w-full max-w-lg bg-white shadow-2xl rounded-3xl p-8 border border-gray-200">
-        <h2 className="text-3xl font-extrabold text-teal-700 mb-6">
+    <div className="min-h-screen bg-gradient-to-r from-lightBlue to-accentBlue flex items-center justify-center p-6">
+      <div className="w-full max-w-lg bg-white shadow-lg rounded-xl p-8 border-t-4 border-mediumBlue">
+        <h2 className="text-3xl font-bold text-darkBlue mb-8 text-center">
           Submit Feedback
         </h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Rating Section */}
-          <div className="rating">
-            <label className="text-lg font-semibold text-gray-700">
+          <div>
+            <label className="text-lg font-semibold text-darkBlue block mb-3">
               Rating (out of 5 stars):
             </label>
-            <div className="flex space-x-2">
+            <div className="flex justify-center space-x-2">
               {[...Array(5)].map((_, index) => {
                 const starValue = index + 1;
                 return (
@@ -70,11 +82,10 @@ export default function FeedbackPage() {
                     onClick={() => setRating(starValue)}
                     onMouseEnter={() => setHover(starValue)}
                     onMouseLeave={() => setHover(0)}
-                    className="cursor-pointer text-3xl"
+                    className="cursor-pointer text-4xl"
                     style={{
-                      color:
-                        starValue <= (hover || rating) ? "#ffc107" : "#e4e5e9",
-                      transition: "color 0.2s ease-in-out",
+                      color: starValue <= (hover || rating) ? "#ffc107" : "#e4e5e9",
+                      transition: "color 0.3s ease",
                     }}
                   >
                     ★
@@ -88,7 +99,7 @@ export default function FeedbackPage() {
           <div>
             <label
               htmlFor="comment"
-              className="text-lg font-semibold text-gray-700"
+              className="text-lg font-semibold text-darkBlue block mb-3"
             >
               Comment:
             </label>
@@ -99,7 +110,7 @@ export default function FeedbackPage() {
               onChange={(e) => setComment(e.target.value)}
               rows="4"
               required
-              className="w-full p-4 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-teal-400"
+              className="w-full p-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-mediumBlue bg-lightBlue text-darkBlue"
             />
           </div>
 
@@ -107,16 +118,23 @@ export default function FeedbackPage() {
           <div className="flex justify-center">
             <button
               type="submit"
-              className="bg-gradient-to-r from-teal-400 to-teal-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-teal-700 transform hover:scale-105 transition duration-300 ease-in-out"
+              disabled={isLoading} // Disable button while loading
+              className={`bg-mediumBlue text-white font-bold py-3 px-6 rounded-lg shadow-md hover:shadow-lg hover:bg-darkBlue transform transition-transform hover:scale-105 ${
+                isLoading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
-              Submit Feedback
+              {isLoading ? "Submitting..." : "Submit Feedback"}
             </button>
           </div>
         </form>
 
         {/* Success/Error Message */}
         {message && (
-          <p className="mt-6 text-lg text-center text-green-500 font-semibold">
+          <p
+            className={`mt-6 text-center text-lg font-semibold ${
+              message.includes("successfully") ? "text-green-600" : "text-red-600"
+            }`}
+          >
             {message}
           </p>
         )}

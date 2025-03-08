@@ -22,7 +22,13 @@ public class Employee {
     @OneToOne
     @JoinColumn(name = "userId", nullable = false, referencedColumnName = "userId")
     @ToString.Exclude
+    @JsonBackReference
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name="managerId", nullable = false)
+    @JsonBackReference
+    private Manager manager;
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
     @ToString.Exclude

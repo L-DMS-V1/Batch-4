@@ -1,13 +1,17 @@
+
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Pie } from "react-chartjs-2";
+import { ArrowLeftIcon } from "@heroicons/react/24/solid"; // Importing the arrow icon
 import "chart.js/auto";
+import toast from "react-hot-toast";
 
 export default function CourseFeedbackPage() {
   const { courseId } = useParams();
   const [feedbacks, setFeedbacks] = useState([]);
   const [averageRating, setAverageRating] = useState(0);
   const [ratingDistribution, setRatingDistribution] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
@@ -44,10 +48,10 @@ export default function CourseFeedbackPage() {
           }, {});
           setRatingDistribution(distribution);
         } else {
-          console.error("Failed to fetch feedbacks");
+          toast.error("Failed to fetch feedbacks");
         }
       } catch (error) {
-        console.error("Error fetching feedbacks:", error);
+        toast.error("Error fetching feedbacks:", error.message);
       }
     };
 
@@ -60,56 +64,70 @@ export default function CourseFeedbackPage() {
       {
         label: "Rating Distribution",
         data: Object.values(ratingDistribution),
-        backgroundColor: [
-          "#FF6384",
-          "#36A2EB",
-          "#FFCE56",
-          "#4CAF50",
-          "#FF9800",
-        ],
+        backgroundColor: ["#8ECAE6", "#219EBC", "#023047", "#FFB703", "#FB8500"],
+        hoverOffset: 10,
       },
     ],
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-purple-50 to-indigo-50 p-8 flex flex-col items-center">
-      <div className="w-full max-w-2xl bg-white shadow-lg rounded-xl p-6 border border-gray-200">
-        <h2 className="text-3xl font-bold text-indigo-700 mb-6">
-          Course Feedback
-        </h2>
-        <h3 className="text-xl font-semibold text-gray-700 mb-6">
-          Average Rating:{" "}
-          <span className="text-indigo-600">
-            {isNaN(averageRating) ? "No feedbacks yet" : averageRating}
-          </span>
-        </h3>
+    <div className="min-h-screen bg-gradient-to-r from-gray-100 to-gray-200 flex items-center justify-center py-12 px-6">
+      <div className="w-full max-w-5xl bg-white shadow-2xl rounded-3xl overflow-hidden border border-gray-300">
+        {/* Header Section */}
+        <div className="relative bg-gradient-to-r from-gray-700 to-gray-800 text-white text-center py-8">
+          {/* Back Button with Arrow in Circle */}
+          <button
+            onClick={() => navigate(-1)} // Navigate back to the previous page
+            className="absolute left-6 top-6 bg-accentBlue text-white p-3 rounded-full hover:bg-mediumBlue transition-colors"
+          >
+            <ArrowLeftIcon className="w-6 h-6" /> {/* Arrow Icon */}
+          </button>
 
-        {/* Pie Chart Section */}
-        <div className="w-full flex justify-center mb-8">
-          <div className="bg-gray-50 p-4 rounded-xl shadow-md w-full max-w-md">
-            <Pie data={pieChartData} />
-          </div>
+          <h1 className="text-4xl font-extrabold tracking-wide">Course Feedback</h1>
+          <p className="mt-4 text-lg font-medium">
+            Average Rating:{" "}
+            <span className="text-yellow-400">
+              {isNaN(averageRating) ? "No feedbacks yet" : averageRating}
+            </span>
+          </p>
         </div>
 
-        {/* Feedbacks Section */}
-        <div className="overflow-y-auto max-h-[300px] border border-gray-300 rounded-lg p-4 mt-6 bg-gray-50 shadow-md">
-          <h4 className="text-xl font-semibold text-gray-800 mb-4">
-            Comments:
-          </h4>
-          <div className="space-y-6">
-            {feedbacks.map((feedback) => (
-              <div
-                key={feedback.feedbackId}
-                className="bg-white p-4 rounded-lg shadow-sm border border-gray-200"
-              >
-                <p className="text-lg font-medium text-gray-800">
-                  <strong>Rating:</strong> {feedback.rating}
-                </p>
-                <p className="text-gray-600">
-                  <strong>Comment:</strong> {feedback.comment}
-                </p>
+        <div className="p-10">
+          {/* Main Content Section */}
+          <div className="flex flex-col lg:flex-row gap-10">
+            {/* Chart Section */}
+            <div className="w-full lg:w-1/2 bg-gray-50 p-6 shadow-lg rounded-2xl border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-700 mb-4 text-center">
+                Rating Distribution
+              </h3>
+              <Pie data={pieChartData} />
+            </div>
+
+            {/* Feedback Section */}
+            <div className="w-full lg:w-1/2 max-h-96 overflow-y-auto bg-gray-50 p-6 shadow-lg rounded-2xl border border-gray-200">
+              <h3 className="text-xl font-bold text-gray-800 mb-6">
+                User Comments
+              </h3>
+              <div className="grid gap-6">
+                {feedbacks.length > 0 ? (
+                  feedbacks.map((feedback) => (
+                    <div
+                      key={feedback.feedbackId}
+                      className="bg-white shadow-lg rounded-lg p-6 border border-gray-200 hover:scale-[1.02] transform transition-all"
+                    >
+                      <p className="text-gray-800 font-medium mb-2">
+                        <strong>Rating:</strong> {feedback.rating}
+                      </p>
+                      <p className="text-gray-600">
+                        <strong>Comment:</strong> {feedback.comment}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500">No feedbacks available yet.</p>
+                )}
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>

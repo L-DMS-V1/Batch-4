@@ -28,7 +28,6 @@ const Login = ({ handleLogin }) => {
         Cookies.set("authToken", token, { expires: 1 });
 
         handleLogin(username, role);
-        console.log("hi" + role);
         if (role == "Manager") {
           navigate(`/training-requests/${id}`); // Redirect to manager's page
         } else if (role == "Employee") {
@@ -98,12 +97,7 @@ const Login = ({ handleLogin }) => {
             >
               Login
             </button>
-            <p className="text-center text-sm mt-4">
-              Don't have an account?{" "}
-              <Link to="/signup" className="text-[#001F3F] font-semibold">
-                Signup
-              </Link>
-            </p>
+            
           </form>
         </div>
       </div>

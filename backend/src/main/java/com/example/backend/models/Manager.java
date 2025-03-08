@@ -1,5 +1,6 @@
 package com.example.backend.models;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
@@ -20,6 +21,11 @@ public class Manager {
     @JoinColumn(name = "userId", nullable = false)
     @JsonBackReference
     private User user;
+
+    @OneToMany(mappedBy = "manager", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JsonBackReference
+    private List<Employee> managedEmployees;
 
     @OneToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
